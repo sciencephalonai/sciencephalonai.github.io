@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Augmentation — SciEncephalon AI</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reset.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/black.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Audiowide&family=Inter:wght@300;400;500;700;900&family=Quicksand:wght@400;500;600&display=swap');
+
+        :root {
+            --r-main-font: 'Inter', Helvetica, sans-serif;
+            --r-heading-font: 'Inter', Helvetica, sans-serif;
+            --r-heading-font-weight: 900;
+            --r-main-color: #ffffff;
+            --r-background-color: #0a0a1a;
+            --r-heading-text-transform: none;
+            --r-link-color: #00c2e8;
+            --r-link-color-hover: #00b3cc;
+            --r-selection-background-color: #0076a3;
+
+            --sci-blue: #0076a3;
+            --sci-cyan: #00c2e8;
+            --sci-navy: #1a2744;
+
+            --accent: #00c2e8;
+            --accent-glow: rgba(0, 194, 232, 0.5);
+            --accent-blue: #0076a3;
+            --health-green: #43B02A;
+            --health-red: #ef4444;
+            --health-amber: #f59e0b;
+        }
+
+        /* ═══════ SCIENCEPHALON LOGO ═══════ */
+        .sci-logo {
+            position: fixed; top: 18px; left: 22px; z-index: 99999;
+            pointer-events: none; transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+            transform-origin: top left; transform: scale(1);
+        }
+        .sci-logo.small-logo { transform: translate(0, calc(100vh - 180px)) scale(0.78); }
+        .sci-logo-mark { width: 570px; height: auto; display: block; }
+
+        /* ═══════ GLOBAL TITLE ═══════ */
+        .global-slide-title {
+            position: fixed; top: 18px; left: 40px; font-size: 1.6em; font-weight: 800;
+            font-family: var(--r-heading-font); color: var(--r-main-color); z-index: 99999;
+            pointer-events: none; opacity: 0; transform: translateY(-20px);
+            transition: opacity 0.8s cubic-bezier(0.25,1,0.5,1), transform 0.8s cubic-bezier(0.25,1,0.5,1);
+            text-shadow: 0 4px 12px rgba(0,0,0,0.9); letter-spacing: -0.02em;
+        }
+        .global-slide-title.visible { opacity: 1; transform: translateY(0); }
+
+        /* ═══════ TYPOGRAPHY ═══════ */
+        body { background: var(--r-background-color); }
+        .reveal { background: transparent !important; }
+        .reveal .slide-background { background: transparent !important; }
+        .reveal .accent { color: var(--accent); }
+        .reveal .accent-blue { color: var(--accent-blue); }
+        .reveal .accent-green { color: var(--health-green); }
+        .reveal .accent-red { color: var(--health-red); }
+        .reveal .accent-amber { color: var(--health-amber); }
+        .reveal h1,.reveal h2,.reveal h3,.reveal h4 { letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 0.5em; }
+        .reveal p { font-size: 1.0em; font-weight: 500; line-height: 1.4; }
+        .reveal .slide-number { color: var(--accent); background-color: transparent; }
+
+        /* ═══════ IMPACT CONTAINER ═══════ */
+        .impact-container { display: none !important; flex-direction: column; justify-content: center; align-items: center; height: 100%; min-height: 100%; position: relative; z-index: 10; width: 100%; max-width: 1120px; margin: 0 auto; padding: 48px 24px 28px; box-sizing: border-box; }
+        .present .impact-container { display: flex !important; }
+        .impact-text { font-size: 1.1em; font-weight: 700; line-height: 1.15; text-align: center; text-shadow: 0 4px 12px rgba(0,0,0,0.9); z-index: 20; position: relative; margin: 0 auto; max-width: 940px; }
+
+        /* ═══════ STAT CARDS ═══════ */
+        .stat-row { display: flex; justify-content: center; gap: 16px; margin-top: 20px; z-index: 20; position: relative; flex-wrap: wrap; }
+        .stat-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(0,194,232,0.2); border-radius: 14px; padding: 16px 18px; text-align: center; min-width: 120px; backdrop-filter: blur(10px); opacity: 0; transform: translateY(30px); }
+        .present .stat-card { animation: cardFadeIn 0.8s ease forwards; }
+        .present .stat-card:nth-child(1) { animation-delay: 0.3s; }
+        .present .stat-card:nth-child(2) { animation-delay: 0.6s; }
+        .present .stat-card:nth-child(3) { animation-delay: 0.9s; }
+        .present .stat-card:nth-child(4) { animation-delay: 1.2s; }
+        .present .stat-card:nth-child(5) { animation-delay: 1.5s; }
+        .present .stat-card:nth-child(6) { animation-delay: 1.8s; }
+        @keyframes cardFadeIn { to { opacity: 1; transform: translateY(0); } }
+        .stat-value { font-size: 1.35em; font-weight: 900; color: var(--accent); text-shadow: 0 0 20px var(--accent-glow); line-height: 1; white-space: nowrap; }
+        .stat-value.green { color: var(--health-green); text-shadow: 0 0 20px rgba(67,176,42,0.4); }
+        .stat-value.red { color: var(--health-red); text-shadow: 0 0 20px rgba(239,68,68,0.4); }
+        .stat-value.amber { color: var(--health-amber); text-shadow: 0 0 20px rgba(245,158,11,0.4); }
+        .stat-label { font-size: 0.65em; color: rgba(255,255,255,0.7); margin-top: 8px; font-weight: 500; }
+
+        /* ═══════ FEATURE BARS ═══════ */
+        .feature-bars { width: min(700px, 95vw); margin: 12px auto 0; z-index: 20; position: relative; }
+        .feature-bar-row { display: flex; align-items: center; margin: 6px 0; opacity: 0; transform: translateX(-30px); }
+        .present .feature-bar-row { animation: barSlideIn 0.6s ease forwards; }
+        .present .feature-bar-row:nth-child(1) { animation-delay: 0.2s; }
+        .present .feature-bar-row:nth-child(2) { animation-delay: 0.35s; }
+        .present .feature-bar-row:nth-child(3) { animation-delay: 0.5s; }
+        .present .feature-bar-row:nth-child(4) { animation-delay: 0.65s; }
+        .present .feature-bar-row:nth-child(5) { animation-delay: 0.8s; }
+        .present .feature-bar-row:nth-child(6) { animation-delay: 0.95s; }
+        @keyframes barSlideIn { to { opacity: 1; transform: translateX(0); } }
+        .feature-name { width: 160px; min-width: 160px; text-align: right; padding-right: 12px; font-size: 0.4em; color: rgba(255,255,255,0.8); font-weight: 600; white-space: nowrap; }
+        .feature-bar-wrap { display: flex; align-items: center; gap: 10px; flex: 1; }
+        .feature-bar { height: 20px; background: linear-gradient(90deg, var(--sci-blue), var(--sci-cyan)); border-radius: 4px; box-shadow: 0 0 10px rgba(0,194,232,0.3); flex-shrink: 0; }
+        .feature-bar-val { font-size: 0.45em; color: var(--accent); font-weight: 700; white-space: nowrap; }
+
+        /* ═══════ PIPELINE FLOW ═══════ */
+        .pipeline-flow { display: flex; align-items: center; justify-content: center; gap: 5px; z-index: 20; position: relative; margin-top: 20px; flex-wrap: nowrap; }
+        .pipeline-node { background: rgba(0,194,232,0.06); border: 1px solid rgba(0,194,232,0.2); border-radius: 10px; padding: 10px 10px; text-align: center; min-width: 95px; opacity: 0; transform: translateY(20px); }
+        .present .pipeline-node { animation: cardFadeIn 0.6s ease forwards; }
+        .present .pipeline-node:nth-child(1) { animation-delay: 0.2s; }
+        .present .pipeline-node:nth-child(2) { animation-delay: 0.5s; }
+        .present .pipeline-node:nth-child(3) { animation-delay: 0.5s; }
+        .present .pipeline-node:nth-child(4) { animation-delay: 0.8s; }
+        .present .pipeline-node:nth-child(5) { animation-delay: 0.8s; }
+        .present .pipeline-node:nth-child(6) { animation-delay: 1.1s; }
+        .present .pipeline-node:nth-child(7) { animation-delay: 1.1s; }
+        .present .pipeline-node:nth-child(8) { animation-delay: 1.4s; }
+        .present .pipeline-node:nth-child(9) { animation-delay: 1.4s; }
+        .present .pipeline-node:nth-child(10) { animation-delay: 1.7s; }
+        .pipeline-icon { font-size: 1.3em; color: var(--accent); margin-bottom: 6px; }
+        .pipeline-label { font-size: 0.45em; font-weight: 700; color: #fff; }
+        .pipeline-sub { font-size: 0.35em; color: rgba(255,255,255,0.5); margin-top: 3px; }
+        .pipeline-arrow { font-size: 1.2em; color: rgba(0,194,232,0.4); opacity: 0; }
+        .present .pipeline-arrow { animation: cardFadeIn 0.4s ease forwards; }
+
+        /* ═══════ RISK TIERS ═══════ */
+        .risk-tiers { display: flex; justify-content: center; gap: 24px; margin-top: 18px; z-index: 20; position: relative; flex-wrap: wrap; }
+        .risk-tier { text-align: center; opacity: 0; transform: scale(0.8); }
+        .present .risk-tier { animation: tierPop 0.7s ease forwards; }
+        .present .risk-tier:nth-child(1) { animation-delay: 0.3s; }
+        .present .risk-tier:nth-child(2) { animation-delay: 0.7s; }
+        .present .risk-tier:nth-child(3) { animation-delay: 1.1s; }
+        @keyframes tierPop { to { opacity: 1; transform: scale(1); } }
+        .tier-circle { width: 130px; height: 130px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto 12px; font-weight: 900; font-size: 0.9em; border: 3px solid; white-space: nowrap; }
+        .tier-circle.high { background: rgba(239,68,68,0.15); border-color: var(--health-red); color: var(--health-red); box-shadow: 0 0 30px rgba(239,68,68,0.3); }
+        .tier-circle.moderate { background: rgba(245,158,11,0.15); border-color: var(--health-amber); color: var(--health-amber); box-shadow: 0 0 30px rgba(245,158,11,0.3); }
+        .tier-circle.low { background: rgba(67,176,42,0.15); border-color: var(--health-green); color: var(--health-green); box-shadow: 0 0 30px rgba(67,176,42,0.3); }
+        .tier-label { font-size: 0.55em; color: rgba(255,255,255,0.7); margin-top: 5px; }
+        .tier-action { font-size: 0.45em; color: rgba(255,255,255,0.5); margin-top: 3px; font-style: italic; }
+
+        /* ═══════ DOMAIN GRID ═══════ */
+        .domain-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; z-index: 20; position: relative; margin-top: 18px; max-width: 900px; }
+        .domain-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(0,194,232,0.2); border-radius: 12px; padding: 16px 16px; text-align: left; opacity: 0; transform: translateY(20px); }
+        .present .domain-card { animation: cardFadeIn 0.6s ease forwards; }
+        .present .domain-card:nth-child(1) { animation-delay: 0.2s; }
+        .present .domain-card:nth-child(2) { animation-delay: 0.35s; }
+        .present .domain-card:nth-child(3) { animation-delay: 0.5s; }
+        .present .domain-card:nth-child(4) { animation-delay: 0.65s; }
+        .present .domain-card:nth-child(5) { animation-delay: 0.8s; }
+        .present .domain-card:nth-child(6) { animation-delay: 0.95s; }
+        .domain-card-icon { font-size: 1.3em; margin-bottom: 10px; }
+        .domain-card-title { font-size: 0.55em; font-weight: 800; color: var(--accent); margin-bottom: 6px; }
+        .domain-card-list { font-size: 0.38em; color: rgba(255,255,255,0.6); line-height: 1.7; }
+
+        /* ═══════ THREE-COLUMN LAYOUT ═══════ */
+        .three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; z-index: 20; position: relative; margin-top: 18px; width: min(1040px, 96vw); align-items: stretch; }
+        .three-col .col-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(0,194,232,0.15); border-radius: 12px; padding: 16px 14px; opacity: 0; transform: translateY(20px); min-width: 0; }
+        .present .three-col .col-card { animation: cardFadeIn 0.7s ease forwards; }
+        .present .three-col .col-card:nth-child(1) { animation-delay: 0.3s; }
+        .present .three-col .col-card:nth-child(2) { animation-delay: 0.6s; }
+        .present .three-col .col-card:nth-child(3) { animation-delay: 0.9s; }
+        .col-num { font-size: 0.45em; font-weight: 900; color: var(--accent); opacity: 0.4; margin-bottom: 8px; }
+        .col-title { font-size: 0.55em; font-weight: 800; color: var(--accent); margin-bottom: 8px; }
+        .col-body { font-size: 0.38em; color: rgba(255,255,255,0.6); line-height: 1.7; }
+
+        /* ═══════ FOUR-COLUMN GRID ═══════ */
+        .four-col { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; z-index: 20; position: relative; margin-top: 18px; max-width: 950px; }
+        .four-col .col-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(0,194,232,0.15); border-radius: 12px; padding: 14px 12px; opacity: 0; transform: translateY(20px); }
+        .present .four-col .col-card { animation: cardFadeIn 0.6s ease forwards; }
+        .present .four-col .col-card:nth-child(1) { animation-delay: 0.2s; }
+        .present .four-col .col-card:nth-child(2) { animation-delay: 0.4s; }
+        .present .four-col .col-card:nth-child(3) { animation-delay: 0.6s; }
+        .present .four-col .col-card:nth-child(4) { animation-delay: 0.8s; }
+
+        /* ═══════ SO-WHAT FOOTER ═══════ */
+        .so-what {
+            position: relative; z-index: 20;
+            font-size: 0.38em; color: rgba(255,255,255,0.4); text-align: center;
+            font-style: italic; padding: 0 44px; margin-top: 14px;
+        }
+        .so-what b { color: var(--accent); font-style: normal; }
+
+        /* ═══════ ENGAGEMENT PILLS ═══════ */
+        .engagement-pills { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 14px; z-index: 20; position: relative; }
+        .eng-pill { background: rgba(0,194,232,0.08); border: 1px solid rgba(0,194,232,0.2); border-radius: 16px; padding: 6px 14px; font-size: 0.36em; color: rgba(255,255,255,0.7); font-weight: 600; opacity: 0; }
+        .present .eng-pill { animation: cardFadeIn 0.5s ease forwards; }
+        .present .eng-pill:nth-child(1) { animation-delay: 0.2s; }
+        .present .eng-pill:nth-child(2) { animation-delay: 0.35s; }
+        .present .eng-pill:nth-child(3) { animation-delay: 0.5s; }
+        .present .eng-pill:nth-child(4) { animation-delay: 0.65s; }
+        .present .eng-pill:nth-child(5) { animation-delay: 0.8s; }
+        .present .eng-pill:nth-child(6) { animation-delay: 0.95s; }
+        .eng-pill-label { font-size: 0.85em; color: rgba(255,255,255,0.4); margin-top: 2px; }
+
+        /* ═══════ EHR LIFECYCLE ═══════ */
+        .lifecycle-flow { display: flex; align-items: center; justify-content: center; gap: 4px; z-index: 20; position: relative; margin-top: 20px; flex-wrap: wrap; }
+        .lifecycle-step { background: rgba(0,194,232,0.08); border: 1px solid rgba(0,194,232,0.2); border-radius: 8px; padding: 8px 14px; font-size: 0.4em; font-weight: 700; color: var(--accent); opacity: 0; }
+        .present .lifecycle-step { animation: cardFadeIn 0.4s ease forwards; }
+        .present .lifecycle-step:nth-child(1) { animation-delay: 0.1s; }
+        .present .lifecycle-step:nth-child(2) { animation-delay: 0.15s; }
+        .present .lifecycle-step:nth-child(3) { animation-delay: 0.2s; }
+        .present .lifecycle-step:nth-child(4) { animation-delay: 0.25s; }
+        .present .lifecycle-step:nth-child(5) { animation-delay: 0.3s; }
+        .present .lifecycle-step:nth-child(6) { animation-delay: 0.35s; }
+        .present .lifecycle-step:nth-child(7) { animation-delay: 0.4s; }
+        .present .lifecycle-step:nth-child(8) { animation-delay: 0.45s; }
+        .present .lifecycle-step:nth-child(9) { animation-delay: 0.5s; }
+        .present .lifecycle-step:nth-child(10) { animation-delay: 0.55s; }
+        .present .lifecycle-step:nth-child(11) { animation-delay: 0.6s; }
+        .lifecycle-arrow { font-size: 0.7em; color: rgba(0,194,232,0.3); opacity: 0; }
+        .present .lifecycle-arrow { animation: cardFadeIn 0.3s ease forwards; }
+
+        /* ═══════ THANK YOU ═══════ */
+        .thankyou-slide-content { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; min-height: 100%; z-index: 20; position: relative; }
+        .present .thankyou-slide-content { display: flex; }
+        .thankyou-main { font-size: 2.8em; font-weight: 900; letter-spacing: -0.03em; text-shadow: 0 4px 20px rgba(0,0,0,0.8); opacity: 0; }
+        .present .thankyou-main { animation: cardFadeIn 1.2s ease forwards 0.3s; }
+        .thankyou-sub { font-size: 1.0em; font-weight: 500; color: rgba(255,255,255,0.7); margin-top: 20px; text-align: center; line-height: 1.5; opacity: 0; }
+        .present .thankyou-sub { animation: cardFadeIn 1.0s ease forwards 1.0s; }
+        .ty-sci-logo { display: flex; flex-direction: column; align-items: center; margin-top: 50px; opacity: 0; }
+        .present .ty-sci-logo { animation: cardFadeIn 1.0s ease forwards 1.5s; }
+        .ty-sci-logo-mark { width: 310px; max-width: 70vw; height: auto; display: block; }
+
+        /* ═══════ ANIMATIONS ═══════ */
+        @keyframes metricPulse { 0%,100% { text-shadow: 0 0 20px var(--accent-glow); } 50% { text-shadow: 0 0 40px var(--accent-glow), 0 0 60px var(--accent-glow); } }
+        .pulse { animation: metricPulse 2s ease-in-out infinite; }
+
+        @media (max-width: 1366px) {
+            .three-col { gap: 12px; }
+            .three-col .col-card { flex-basis: 250px; }
+            .four-col { gap: 10px; }
+            .domain-grid { gap: 10px; }
+            .so-what { font-size: 0.34em; padding: 0 32px; }
+            .tier-circle { width: 116px; height: 116px; }
+            .domain-grid { grid-template-columns: repeat(2, 1fr); }
+            .four-col { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ═══════ SCIENCEPHALON LOGO ═══════ -->
+    <div class="sci-logo">
+        <img class="sci-logo-mark" src="../Brand/logos/logo_dark.svg" alt="SciEncephalon AI logo">
+    </div>
+
+    <div class="global-slide-title"></div>
+
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- ═══════ SLIDE 0 — TITLE ═══════ -->
+            <section>
+                <div class="impact-container">
+                    <div style="font-size: 0.4em; color: rgba(255,255,255,0.35); z-index:20; position:relative; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 15px;">
+                        STAFF AUGMENTATION &middot; 2026
+                    </div>
+                    <div class="impact-text" style="font-size: 1.6em;">
+                        Close Critical Tech Roles<br>with <span class="accent">Speed and Quality</span>
+                    </div>
+                    <div style="font-size: 0.5em; color: rgba(255,255,255,0.45); margin-top: 25px; z-index:20; position:relative; font-weight: 400; max-width: 700px; text-align: center; line-height: 1.6;">
+                        SciEncephalon delivers domain-certified talent in 48 hours, at materially lower cost than traditional consulting models.
+                    </div>
+                    <div style="margin-top: 35px; z-index:20; position:relative; text-align: center;">
+                        <img src="../Brand/logos/logo_dark.svg" alt="SciEncephalon AI logo" style="width: 320px; max-width: 62vw; height: auto; margin: 0 auto; display: block;">
+                    </div>
+                    <div style="font-size: 0.35em; color: rgba(255,255,255,0.3); margin-top: 30px; z-index:20; position:relative; letter-spacing: 0.08em;">
+                        Healthcare IT &middot; Data & AI &middot; Cloud &middot; Cyber &middot; Product
+                    </div>
+                    <div style="font-size: 0.3em; color: rgba(255,255,255,0.2); margin-top: 12px; z-index:20; position:relative;">
+                        NCQA AI Working Group &middot; Linux Foundation AGNTCY &middot; Fortune 500 Deployments
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══════ SLIDE 1 — EXECUTIVE SUMMARY ═══════ -->
+            <section>
+                <div class="impact-container">
+                    <div class="impact-text" style="font-size: 1.2em;">
+                        Why leading enterprises choose SciEncephalon <span class="accent">AI</span> now
+                    </div>
+                    <div class="three-col">
+                        <div class="col-card">
+                            <div class="col-num">01</div>
+                            <div class="col-title">CONTEXT</div>
+                            <div style="font-size: 0.5em; font-weight: 800; color: var(--health-red); margin-bottom: 8px;">Demand is outpacing supply</div>
+                            <div class="col-body">Mission-critical roles in EHR, data, AI, and cloud stay open too long, putting delivery milestones and transformation value at risk.</div>
+                        </div>
+                        <div class="col-card">
+                            <div class="col-num">02</div>
+                            <div class="col-title">CHALLENGE</div>
+                            <div style="font-size: 0.5em; font-weight: 800; color: var(--health-amber); margin-bottom: 8px;">Legacy models underperform</div>
+                            <div class="col-body">Generalist benches and high overhead drive slower ramp-up, inconsistent fit, and higher total cost of delivery.</div>
+                        </div>
+                        <div class="col-card">
+                            <div class="col-num">03</div>
+                            <div class="col-title">PROPOSITION</div>
+                            <div style="font-size: 0.5em; font-weight: 800; color: var(--health-green); margin-bottom: 8px;">Outcome-first talent model</div>
+                            <div class="col-body">We place senior, domain-certified practitioners at 30-40% below Big 4 rates, with clear SLAs and measurable delivery outcomes.</div>
+                        </div>
+                    </div>
+                    <div class="so-what"><b>SO WHAT →</b> Faster staffing, better fit, and lower cost translate directly into faster value realization.</div>
+                </div>
+            </section>
+
+            <!-- ═══════ SLIDE 2 — WHO WE ARE ═══════ -->
+            <section>
+                <div class="impact-container">
+                    <div class="impact-text" style="font-size: 1.1em;">
+                        A specialist staffing and advisory partner<br>for the <span class="accent">intelligent enterprise</span>
+                    </div>
+                    <div style="display: flex; gap: 30px; z-index: 20; position: relative; margin-top: 25px; max-width: 850px;">
+                        <div style="flex: 1; opacity: 0; transform: translateY(20px);" class="stat-card">
+                            <div style="font-size: 0.5em; font-weight: 800; color: var(--accent); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.1em;">Our Mission</div>
+                            <div style="font-size: 0.38em; color: rgba(255,255,255,0.6); line-height: 1.7; text-align: left;">Expand access to elite technology talent so enterprises can execute critical programs with speed and confidence.</div>
+                        </div>
+                        <div style="flex: 1; opacity: 0; transform: translateY(20px);" class="stat-card">
+                            <div style="font-size: 0.5em; font-weight: 800; color: var(--accent); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.1em;">Our Vision</div>
+                            <div style="font-size: 0.38em; color: rgba(255,255,255,0.6); line-height: 1.7; text-align: left;">Become the most trusted partner for CIOs seeking reliable, domain-certified talent at enterprise scale.</div>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; z-index: 20; position: relative; margin-top: 25px; width: min(1040px, 96vw);">
+                        <div class="stat-card" style="min-width: 0; padding: 14px 14px;">
+                            <div class="pipeline-icon"><i class="fa-solid fa-award"></i></div>
+                            <div style="font-size: 0.5em; font-weight: 800; color: var(--accent);">NCQA</div>
+                            <div class="stat-label">Founding member, AI<br>Stakeholder Working Group</div>
+                        </div>
+                        <div class="stat-card" style="min-width: 0; padding: 14px 14px;">
+                            <div class="pipeline-icon" style="color: var(--health-green);"><i class="fa-solid fa-code-branch"></i></div>
+                            <div style="font-size: 0.5em; font-weight: 800; color: var(--health-green);">Linux Foundation</div>
+                            <div class="stat-label">Member, AGNTCY<br>open-source agent network</div>
+                        </div>
+                        <div class="stat-card" style="min-width: 0; padding: 14px 14px;">
+                            <div class="pipeline-icon" style="color: var(--health-amber);"><i class="fa-solid fa-building"></i></div>
+                            <div style="font-size: 0.5em; font-weight: 800; color: var(--health-amber);">Fortune 500</div>
+                            <div class="stat-label">Proven enterprise<br>deployments</div>
+                        </div>
+                    </div>
+                    <div class="so-what"><b>SO WHAT →</b> You get strategic guidance and execution capacity from one accountable partner.</div>
+                </div>
+            </section>
+
+            <!-- ═══════ SLIDE 3 — STAFFING CATEGORIES ═══════ -->
+            <section>
+                <div class="impact-container">
+                    <div class="impact-text" style="font-size: 1.2em;">
+                        Coverage across <span class="accent">six critical capability towers</span>
+                    </div>
+                    <div class="domain-grid">
+                        <div class="domain-card">
+                            <div class="domain-card-icon"><i class="fa-solid fa-hospital" style="color: var(--sci-blue);"></i></div>
+                            <div class="domain-card-title">Healthcare IT &amp; EHR</div>
+                            <div class="domain-card-list">Epic and Oracle Health consultants<br>Clinical informatics specialists<br>Interoperability and integration leads</div>
+                        </div>
+                        <div class="domain-card">
+                            <div class="domain-card-icon"><i class="fa-solid fa-brain" style="color: var(--sci-cyan);"></i></div>
+                            <div class="domain-card-title">Data &amp; AI/ML</div>
+                            <div class="domain-card-list">Data scientists and ML engineers<br>AI architecture and model design<br>MLOps and analytics delivery</div>
+                        </div>
+                        <div class="domain-card">
+                            <div class="domain-card-icon"><i class="fa-solid fa-cloud" style="color: #6366f1;"></i></div>
+                            <div class="domain-card-title">Cloud &amp; DevOps</div>
+                            <div class="domain-card-list">AWS, Azure, and GCP architects<br>DevOps and SRE specialists<br>Kubernetes and platform engineers</div>
+                        </div>
+                        <div class="domain-card">
+                            <div class="domain-card-icon"><i class="fa-solid fa-code" style="color: var(--health-amber);"></i></div>
+                            <div class="domain-card-title">Full Stack &amp; App Dev</div>
+                            <div class="domain-card-list">Frontend and backend engineering<br>API and microservices architecture<br>Mobile and product engineering</div>
+                        </div>
+                        <div class="domain-card">
+                            <div class="domain-card-icon"><i class="fa-solid fa-shield-halved" style="color: var(--health-red);"></i></div>
+                            <div class="domain-card-title">Cybersecurity &amp; Compliance</div>
+                            <div class="domain-card-list">Threat and vulnerability response<br>Identity and access management<br>Compliance and zero-trust design</div>
+                        </div>
+                        <div class="domain-card">
+                            <div class="domain-card-icon"><i class="fa-solid fa-tasks" style="color: var(--health-green);"></i></div>
+                            <div class="domain-card-title">Project &amp; QA</div>
+                            <div class="domain-card-list">Program and delivery leadership<br>QA and test automation<br>Business analysis and process excellence</div>
+                        </div>
+                    </div>
+                    <div class="so-what"><b>SO WHAT →</b> One partner can cover your full technology agenda, reducing vendor fragmentation and coordination overhead.</div>
+                </div>
+            </section>
+
+            <!-- ═══════ SLIDE 4 — HEALTHCARE IT SPOTLIGHT ═══════ -->
+            <section>
+                <div class="impact-container">
+                    <div style="font-size: 0.4em; color: rgba(255,255,255,0.35); z-index:20; position:relative; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 10px;">
+                        SPOTLIGHT &middot; Healthcare IT &amp; EHR
+                    </div>
+                    <div class="impact-text" style="font-size: 1.1em;">
+                        Certified EHR talent from implementation through <span class="accent">optimization</span>
+                    </div>
+                    <div class="lifecycle-flow">
+                        <div class="lifecycle-step">Assess</div>
+                        <div class="lifecycle-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                        <div class="lifecycle-step">Build</div>
+                        <div class="lifecycle-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                        <div class="lifecycle-step">Implement</div>
+                        <div class="lifecycle-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                        <div class="lifecycle-step">Go-Live</div>
+                        <div class="lifecycle-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                        <div class="lifecycle-step">Optimize</div>
+                        <div class="lifecycle-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                        <div class="lifecycle-step">Support</div>
+                    </div>
+                    <div style="font-size: 0.42em; color: rgba(255,255,255,0.55); line-height: 1.6; text-align: center; margin-top: 14px; max-width: 820px; z-index: 20; position: relative;">
+                        Epic and Cerner/Oracle Health analysts, builders, and PMs &middot; clinical informatics for CPOE and decision support &middot; HL7/FHIR integration engineers for compliance mandates.
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; z-index: 20; position: relative; margin-top: 18px; width: min(1040px, 96vw);">
+                        <div class="stat-card" style="min-width: 0;">
+                            <div class="stat-value pulse">200+</div>
+                            <div class="stat-label">Epic &amp; Cerner certified<br>consultants</div>
+                        </div>
+                        <div class="stat-card" style="min-width: 0;">
+                            <div class="stat-value green">↓60%</div>
+                            <div class="stat-label">Faster ramp-up vs.<br>traditional firms</div>
+                        </div>
+                        <div class="stat-card" style="min-width: 0;">
+                            <div class="stat-value green">30-40%</div>
+                            <div class="stat-label">Below Big 4 rates<br>for certified talent</div>
+                        </div>
+                        <div class="stat-card" style="min-width: 0;">
+                            <div class="stat-value">100%</div>
+                            <div class="stat-label">Pre-screened for domain<br>fit &amp; certification</div>
+                        </div>
+                    </div>
+                    <div class="so-what"><b>SO WHAT →</b> You get certified practitioners who have delivered complex EHR programs at enterprise scale.</div>
+                </div>
+            </section>
+
+            <!-- ═══════ SLIDE 5 — DATA & AI SPOTLIGHT ═══════ -->
+            <section>
+                <div class="impact-container">
+                    <div style="font-size: 0.4em; color: rgba(255,255,255,0.35); z-index:20; position:relative; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 10px;">
+                        SPOTLIGHT &middot; Data &amp; AI
+                    </div>
+                    <div class="impact-text" style="font-size: 1.1em;">
+                        From data pipelines to production AI,<br><span class="accent">senior talent</span> on demand
+                    </div>
+                    <div class="three-col">
+                        <div class="col-card">
+                            <div class="col-num">01</div>
+                            <div class="col-title">Data Engineering</div>
+                            <div class="col-body">Pipeline architecture and integration<br>Lakehouse engineering and optimization<br>Data governance and quality controls</div>
+                        </div>
+                        <div class="col-card">
+                            <div class="col-num">02</div>
+                            <div class="col-title">AI / ML Engineering</div>
+                            <div class="col-body">ML engineering and model development<br>NLP and computer vision specialists<br>MLOps and lifecycle management</div>
+                        </div>
+                        <div class="col-card">
+                            <div class="col-num">03</div>
+                            <div class="col-title">Generative AI</div>
+                            <div class="col-body">LLM and RAG solution architecture<br>Agentic workflow and orchestration design<br>Responsible AI and governance support</div>
+                        </div>
+                    </div>
+                    <div class="so-what"><b>SO WHAT →</b> One partner across the full data-to-AI stack accelerates delivery and reduces execution risk.</div>
+                </div>
+            </section>
+
+            <!-- ═══════ SLIDE 6 — PRICING ADVANTAGE ═══════ -->
+            <section>
+                <div class="impact-container">
+                    <div class="impact-text">
+                        Lower cost, stronger fit:<br><span class="accent-green">30-40%</span> below market with <span class="accent">enterprise-grade talent.</span>
+                    </div>
+                    <div class="risk-tiers">
+                        <div class="risk-tier">
+                            <div class="tier-circle high">
+                                <div style="font-size:0.7em; line-height:1;">$250-400</div>
+                                <div style="font-size:0.35em; margin-top:6px; letter-spacing:0.1em;">/HOUR</div>
+                            </div>
+                            <div class="tier-label"><i class="fa-solid fa-building-columns" style="color: var(--health-red);"></i> Big 4 Consultancies</div>
+                            <div class="tier-action">Higher cost, slower activation</div>
+                        </div>
+                        <div class="risk-tier">
+                            <div class="tier-circle moderate">
+                                <div style="font-size:0.7em; line-height:1;">EHR Only</div>
+                                <div style="font-size:0.35em; margin-top:6px; letter-spacing:0.1em;">LIMITED</div>
+                            </div>
+                            <div class="tier-label"><i class="fa-solid fa-user-tie" style="color: var(--health-amber);"></i> Niche Staffing Firms</div>
+                            <div class="tier-action">Narrow coverage, limited scale</div>
+                        </div>
+                        <div class="risk-tier">
+                            <div class="tier-circle low">
+                                <div style="font-size:0.65em; line-height:1;">30-40%</div>
+                                <div style="font-size:0.35em; margin-top:6px; letter-spacing:0.1em;">BELOW</div>
+                            </div>
+                            <div class="tier-label"><i class="fa-solid fa-flask" style="color: var(--health-green);"></i> SciEncephalon AI</div>
+                            <div class="tier-action">Certified specialists, broad coverage</div>
+                        </div>
+                    </div>
+                    <div style="font-size: 0.42em; color: rgba(255,255,255,0.45); line-height: 1.6; text-align: center; margin-top: 22px; max-width: 820px; z-index: 20; position: relative;">
+                        Flexible commercial models: contract, contract-to-hire, direct placement, managed teams, offshore/hybrid, and advisory. Detailed in appendix.
+                    </div>
+                    <div class="so-what"><b>SO WHAT →</b> You can improve delivery economics without trading off quality or speed.</div>
+                </div>
+            </section>
+
+            <!-- ═══════ SLIDE 7 — INDUSTRIES ═══════ -->
+            <section>
+                <div class="impact-container">
+                    <div class="impact-text" style="font-size: 1.1em;">
+                        Domain-certified practitioners across <span class="accent">regulated industries</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; z-index: 20; position: relative; margin-top: 22px; max-width: 900px; width: 100%;">
+                        <div class="stat-card" style="padding: 14px 12px; min-width: 0;">
+                            <i class="fa-solid fa-heart-pulse" style="font-size: 1.1em; color: var(--accent); margin-bottom: 6px; display: block;"></i>
+                            <div style="font-size: 0.48em; font-weight: 800; color: var(--accent); margin-bottom: 4px;">Healthcare &amp; Life Sciences</div>
+                            <div style="font-size: 0.32em; color: rgba(255,255,255,0.55); line-height: 1.5; margin-bottom: 8px;">EHR, clinical AI, revenue cycle, population health</div>
+                            <div style="font-size: 1.0em; font-weight: 900; color: var(--accent); line-height: 1;">60%</div>
+                            <div style="font-size: 0.3em; color: rgba(255,255,255,0.5); margin-top: 3px;">of placements</div>
+                        </div>
+                        <div class="stat-card" style="padding: 14px 12px; min-width: 0;">
+                            <i class="fa-solid fa-building-columns" style="font-size: 1.1em; color: var(--sci-cyan); margin-bottom: 6px; display: block;"></i>
+                            <div style="font-size: 0.48em; font-weight: 800; color: var(--sci-cyan); margin-bottom: 4px;">Banking &amp; Financial Services</div>
+                            <div style="font-size: 0.32em; color: rgba(255,255,255,0.55); line-height: 1.5; margin-bottom: 8px;">Risk modeling, fraud detection, cloud architecture</div>
+                            <div style="font-size: 1.0em; font-weight: 900; color: var(--sci-cyan); line-height: 1;">25%</div>
+                            <div style="font-size: 0.3em; color: rgba(255,255,255,0.5); margin-top: 3px;">of placements</div>
+                        </div>
+                        <div class="stat-card" style="padding: 14px 12px; min-width: 0;">
+                            <i class="fa-solid fa-microchip" style="font-size: 1.1em; color: var(--health-amber); margin-bottom: 6px; display: block;"></i>
+                            <div style="font-size: 0.48em; font-weight: 800; color: var(--health-amber); margin-bottom: 4px;">Enterprise &amp; Technology</div>
+                            <div style="font-size: 0.32em; color: rgba(255,255,255,0.55); line-height: 1.5; margin-bottom: 8px;">Full-stack, cloud, data science, DevOps, QA</div>
+                            <div style="font-size: 1.0em; font-weight: 900; color: var(--health-amber); line-height: 1;">15%</div>
+                            <div style="font-size: 0.3em; color: rgba(255,255,255,0.5); margin-top: 3px;">of placements</div>
+                        </div>
+                    </div>
+                    <div style="font-size: 0.38em; color: rgba(255,255,255,0.4); margin-top: 14px; z-index: 20; position: relative;">
+                        Also serving: Pharma &amp; Biotech &middot; Manufacturing &middot; Retail &middot; Energy &middot; Public Sector &middot; Education
+                    </div>
+                    <div class="so-what"><b>SO WHAT →</b> Domain expertise is not optional. Our practitioners understand your industry before writing a line of code.</div>
+                </div>
+            </section>
+
+            <!-- ═══════ SLIDE 8 — HOW WE STAFF ═══════ -->
+            <section>
+                <div class="impact-container">
+                    <div class="impact-text" style="font-size: 1.1em;">
+                        From requirement to <span class="accent">productive delivery</span> in under two weeks
+                    </div>
+                    <div class="three-col">
+                        <div class="col-card">
+                            <div class="col-num">01</div>
+                            <div class="col-title">Requirements &amp; Matching</div>
+                            <div class="col-body">
+                                Align role outcomes and skill profile<br>
+                                Match from a vetted specialist network<br>
+                                Present top candidates within 48 hours
+                            </div>
+                            <div style="font-size: 0.38em; color: var(--accent); font-weight: 700; margin-top: 10px;">→ Curated shortlist with skills matrix</div>
+                        </div>
+                        <div class="col-card">
+                            <div class="col-num">02</div>
+                            <div class="col-title">Onboarding &amp; Ramp-Up</div>
+                            <div class="col-body">
+                                Execute structured onboarding plan<br>
+                                Enable systems and operating cadence<br>
+                                Reach productive contribution in week one
+                            </div>
+                            <div style="font-size: 0.38em; color: var(--health-green); font-weight: 700; margin-top: 10px;">→ Embedded team member delivering value</div>
+                        </div>
+                        <div class="col-card">
+                            <div class="col-num">03</div>
+                            <div class="col-title">Perform &amp; Scale</div>
+                            <div class="col-body">
+                                Track performance with bi-weekly reviews<br>
+                                Scale capacity up or down rapidly<br>
+                                Backfill quickly when fit is not optimal
+                            </div>
+                            <div style="font-size: 0.38em; color: var(--health-amber); font-weight: 700; margin-top: 10px;">→ Sustained delivery with SLA guarantees</div>
+                        </div>
+                    </div>
+                    <div class="so-what"><b>SO WHAT →</b> A repeatable staffing engine that compresses time-to-value and lowers delivery risk.</div>
+                </div>
+            </section>
+
+            <!-- ═══════ SLIDE 9 — WHY SCIENCEPHALON ═══════ -->
+            <section>
+                <div class="impact-container">
+                    <div class="impact-text" style="font-size: 1.2em;">
+                        Four quantified reasons to choose <span class="accent">SciEncephalon</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; z-index: 20; position: relative; margin-top: 18px; max-width: 850px;">
+                        <div class="stat-card" style="text-align: left; padding: 18px;">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                                <div class="pipeline-icon" style="margin-bottom: 0;"><i class="fa-solid fa-certificate"></i></div>
+                                <div>
+                                    <div style="font-size: 1.1em; font-weight: 900; color: var(--accent); line-height: 1;">100%</div>
+                                    <div style="font-size: 0.48em; font-weight: 800; color: var(--accent);">Domain-Certified</div>
+                                </div>
+                            </div>
+                            <div style="font-size: 0.38em; color: rgba(255,255,255,0.6); line-height: 1.7;">Pre-screened for domain depth and certifications before submission.</div>
+                        </div>
+                        <div class="stat-card" style="text-align: left; padding: 18px;">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                                <div class="pipeline-icon" style="margin-bottom: 0; color: var(--health-green);"><i class="fa-solid fa-dollar-sign"></i></div>
+                                <div>
+                                    <div style="font-size: 1.1em; font-weight: 900; color: var(--health-green); line-height: 1;">30-40%</div>
+                                    <div style="font-size: 0.48em; font-weight: 800; color: var(--health-green);">Below Big 4</div>
+                                </div>
+                            </div>
+                            <div style="font-size: 0.38em; color: rgba(255,255,255,0.6); line-height: 1.7;">Lean operating model delivers senior talent at materially better economics.</div>
+                        </div>
+                        <div class="stat-card" style="text-align: left; padding: 18px;">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                                <div class="pipeline-icon" style="margin-bottom: 0; color: var(--health-amber);"><i class="fa-solid fa-bolt"></i></div>
+                                <div>
+                                    <div style="font-size: 1.1em; font-weight: 900; color: var(--health-amber); line-height: 1;">48 hrs</div>
+                                    <div style="font-size: 0.48em; font-weight: 800; color: var(--health-amber);">To Shortlist</div>
+                                </div>
+                            </div>
+                            <div style="font-size: 0.38em; color: rgba(255,255,255,0.6); line-height: 1.7;">Live specialist network turns priority roles into curated shortlists in two days.</div>
+                        </div>
+                        <div class="stat-card" style="text-align: left; padding: 18px;">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                                <div class="pipeline-icon" style="margin-bottom: 0; color: var(--sci-cyan);"><i class="fa-solid fa-shield-halved"></i></div>
+                                <div>
+                                    <div style="font-size: 1.1em; font-weight: 900; color: var(--sci-cyan); line-height: 1;">$0</div>
+                                    <div style="font-size: 0.48em; font-weight: 800; color: var(--sci-cyan);">Replacement Cost</div>
+                                </div>
+                            </div>
+                            <div style="font-size: 0.38em; color: rgba(255,255,255,0.6); line-height: 1.7;">SLA-backed governance with no-cost replacement if performance falls short.</div>
+                        </div>
+                    </div>
+                    <div class="so-what"><b>SO WHAT →</b> Quality, cost, speed, and execution certainty, each backed by a number.</div>
+                </div>
+            </section>
+
+            <!-- ═══════ SLIDE 10 — ENGAGEMENT VOLUME ═══════ -->
+            <section>
+                <div class="impact-container">
+                    <div class="impact-text" style="font-size: 1.1em;">
+                        Engagement volume &amp; <span class="accent">client economics</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; z-index: 20; position: relative; margin-top: 18px; max-width: 720px;">
+                        <div class="stat-card">
+                            <div class="stat-value pulse">42</div>
+                            <div class="stat-label">Active Consultants<br><span style="color: var(--health-green); font-weight: 700;">+12% QoQ</span></div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">8</div>
+                            <div class="stat-label">Open Requests<br><span style="color: var(--health-green); font-weight: 700;">-5% QoQ</span></div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value green">$1.2M</div>
+                            <div class="stat-label">Quarterly Client Savings<br><span style="color: var(--health-green); font-weight: 700;">+22% QoQ</span></div>
+                        </div>
+                    </div>
+                    <!-- CSS Bar Chart: Active Consultants by Domain -->
+                    <div class="feature-bars" style="margin-top: 20px;">
+                        <div style="font-size: 0.45em; color: rgba(255,255,255,0.5); font-weight: 700; margin-bottom: 10px; text-align: center;">Active Consultants by Domain</div>
+                        <div class="feature-bar-row">
+                            <div class="feature-name">Healthcare IT</div>
+                            <div class="feature-bar-wrap"><div class="feature-bar" style="width: 280px;"></div><span class="feature-bar-val">15</span></div>
+                        </div>
+                        <div class="feature-bar-row">
+                            <div class="feature-name">Data &amp; AI/ML</div>
+                            <div class="feature-bar-wrap"><div class="feature-bar" style="width: 190px;"></div><span class="feature-bar-val">10</span></div>
+                        </div>
+                        <div class="feature-bar-row">
+                            <div class="feature-name">Cloud &amp; DevOps</div>
+                            <div class="feature-bar-wrap"><div class="feature-bar" style="width: 130px;"></div><span class="feature-bar-val">7</span></div>
+                        </div>
+                        <div class="feature-bar-row">
+                            <div class="feature-name">Full Stack</div>
+                            <div class="feature-bar-wrap"><div class="feature-bar" style="width: 95px;"></div><span class="feature-bar-val">5</span></div>
+                        </div>
+                        <div class="feature-bar-row">
+                            <div class="feature-name">Security</div>
+                            <div class="feature-bar-wrap"><div class="feature-bar" style="width: 56px;"></div><span class="feature-bar-val">3</span></div>
+                        </div>
+                        <div class="feature-bar-row">
+                            <div class="feature-name">Project &amp; QA</div>
+                            <div class="feature-bar-wrap"><div class="feature-bar" style="width: 38px;"></div><span class="feature-bar-val">2</span></div>
+                        </div>
+                    </div>
+                    <div class="so-what"><b>SO WHAT →</b> Diversified, growing book with concentration in healthcare IT and measurable savings to clients.</div>
+                </div>
+            </section>
+
+            <!-- ═══════ SLIDE 11 — SLA & PIPELINE ═══════ -->
+            <section>
+                <div class="impact-container">
+                    <div class="impact-text">
+                        SLA performance: <span class="accent">we deliver.</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; z-index: 20; position: relative; margin-top: 20px; width: min(1040px, 96vw);">
+                        <div class="stat-card" style="min-width: 0;">
+                            <div class="stat-value pulse">36 hrs</div>
+                            <div class="stat-label">Time to Shortlist<br><span style="opacity: 0.6;">Target: 48 hours</span></div>
+                        </div>
+                        <div class="stat-card" style="min-width: 0;">
+                            <div class="stat-value green">3.2 days</div>
+                            <div class="stat-label">Average Fill Time<br><span style="opacity: 0.6;">Target: 10 days</span></div>
+                        </div>
+                        <div class="stat-card" style="min-width: 0;">
+                            <div class="stat-value green">96%</div>
+                            <div class="stat-label">Consultant Retention<br><span style="opacity: 0.6;">Target: 90%+</span></div>
+                        </div>
+                        <div class="stat-card" style="min-width: 0;">
+                            <div class="stat-value green">4.8/5</div>
+                            <div class="stat-label">Client Satisfaction<br><span style="opacity: 0.6;">Target: 4.5+</span></div>
+                        </div>
+                    </div>
+                    <!-- Talent Pipeline -->
+                    <div style="margin-top: 30px; z-index: 20; position: relative; max-width: 700px; width: 100%;">
+                        <div style="font-size: 0.45em; color: rgba(255,255,255,0.5); font-weight: 700; margin-bottom: 12px; text-align: center;">Talent Pipeline</div>
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <div style="display: flex; align-items: center; gap: 12px; opacity: 0; transform: translateX(-20px);" class="feature-bar-row">
+                                <div style="width: 130px; text-align: right; font-size: 0.42em; color: rgba(255,255,255,0.7); font-weight: 600;">Vetted &amp; Ready</div>
+                                <div style="flex: 1; height: 22px; background: rgba(255,255,255,0.05); border-radius: 6px; overflow: hidden; position: relative;">
+                                    <div style="width: 85%; height: 100%; background: linear-gradient(90deg, var(--sci-blue), var(--sci-cyan)); border-radius: 6px;"></div>
+                                </div>
+                                <div style="font-size: 0.45em; color: var(--accent); font-weight: 800; min-width: 40px;">127</div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px; opacity: 0; transform: translateX(-20px);" class="feature-bar-row">
+                                <div style="width: 130px; text-align: right; font-size: 0.42em; color: rgba(255,255,255,0.7); font-weight: 600;">In Screening</div>
+                                <div style="flex: 1; height: 22px; background: rgba(255,255,255,0.05); border-radius: 6px; overflow: hidden; position: relative;">
+                                    <div style="width: 55%; height: 100%; background: linear-gradient(90deg, var(--sci-cyan), #6366f1); border-radius: 6px;"></div>
+                                </div>
+                                <div style="font-size: 0.45em; color: var(--accent); font-weight: 800; min-width: 40px;">48</div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px; opacity: 0; transform: translateX(-20px);" class="feature-bar-row">
+                                <div style="width: 130px; text-align: right; font-size: 0.42em; color: rgba(255,255,255,0.7); font-weight: 600;">Interviewing</div>
+                                <div style="flex: 1; height: 22px; background: rgba(255,255,255,0.05); border-radius: 6px; overflow: hidden; position: relative;">
+                                    <div style="width: 30%; height: 100%; background: linear-gradient(90deg, var(--health-amber), #f97316); border-radius: 6px;"></div>
+                                </div>
+                                <div style="font-size: 0.45em; color: var(--health-amber); font-weight: 800; min-width: 40px;">12</div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px; opacity: 0; transform: translateX(-20px);" class="feature-bar-row">
+                                <div style="width: 130px; text-align: right; font-size: 0.42em; color: rgba(255,255,255,0.7); font-weight: 600;">Offer Extended</div>
+                                <div style="flex: 1; height: 22px; background: rgba(255,255,255,0.05); border-radius: 6px; overflow: hidden; position: relative;">
+                                    <div style="width: 15%; height: 100%; background: linear-gradient(90deg, var(--health-green), #22c55e); border-radius: 6px;"></div>
+                                </div>
+                                <div style="font-size: 0.45em; color: var(--health-green); font-weight: 800; min-width: 40px;">5</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="so-what"><b>SO WHAT →</b> Every SLA ahead of target, with a ready pipeline. If a placement underperforms, we replace at no cost.</div>
+                </div>
+            </section>
+
+            <!-- ═══════ SLIDE 12 — THANK YOU ═══════ -->
+            <section>
+                <div class="thankyou-slide-content">
+                    <div style="font-size: 0.45em; color: rgba(255,255,255,0.3); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 15px; z-index: 20; position: relative;">
+                        READY TO STAFF UP
+                    </div>
+                    <div class="thankyou-main">Let's build your<br><span class="accent">dream team</span> together.</div>
+                    <div class="thankyou-sub">
+                        <span style="font-family: 'Quicksand'; font-style: italic;">"We bring clarity to your ambiguity."</span>
+                    </div>
+                    <div class="ty-sci-logo">
+                        <img class="ty-sci-logo-mark" src="../Brand/logos/logo_dark.svg" alt="SciEncephalon AI logo">
+                    </div>
+                    <div style="display: flex; gap: 30px; margin-top: 30px; font-size: 0.42em; color: rgba(255,255,255,0.5); z-index: 20; position: relative; flex-wrap: wrap; justify-content: center; row-gap: 10px;">
+                        <div><i class="fa-solid fa-envelope" style="color: var(--accent); margin-right: 6px;"></i> contact@sciencephalon.com</div>
+                        <div><i class="fa-solid fa-phone" style="color: var(--accent); margin-right: 6px;"></i> +1 (401) 255-0391</div>
+                        <div><i class="fa-solid fa-globe" style="color: var(--accent); margin-right: 6px;"></i> sciencephalon.com</div>
+                        <div><i class="fa-solid fa-location-dot" style="color: var(--accent); margin-right: 6px;"></i> Jacksonville, FL</div>
+                    </div>
+                    <div style="margin-top: 25px; font-size: 0.3em; color: rgba(255,255,255,0.25); z-index: 20; position: relative;">
+                        NCQA AI Working Group &middot; Linux Foundation AGNTCY &middot; Fortune 500 Deployments
+                    </div>
+                    <div style="margin-top: 10px; font-size: 0.28em; color: rgba(255,255,255,0.2); z-index: 20; position: relative;">
+                        &copy; 2026 SciEncephalon Corp.
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+
+    <script>
+        function shouldAnimate(canvas) {
+            if (document.visibilityState !== 'visible') return false;
+            const op = canvas.style.opacity;
+            if (op === '0') return false;
+            if (op === '1') return true;
+            return parseFloat(getComputedStyle(canvas).opacity) > 0.01;
+        }
+
+        Reveal.initialize({
+            width: 1280, height: 850, margin: 0, minScale: 0.2, maxScale: 2.0,
+            hash: true, center: true, transition: 'fade', backgroundTransition: 'fade',
+            transitionSpeed: 'fast',
+            slideNumber: true
+        });
+
+        /* ═══════ CANVAS ANIMATION — Flowing Nodes Network ═══════ */
+        function initNetwork() {
+            if (window._networkReady) return;
+            window._networkReady = true;
+
+            const canvas = document.createElement('canvas');
+            canvas.id = 'network-canvas';
+            canvas.style.cssText = 'position:fixed;top:0;left:0;z-index:-1;width:100vw;height:100vh;opacity:0;transition:opacity 0.6s;';
+            document.body.appendChild(canvas);
+
+            const ctx = canvas.getContext('2d');
+            let W, H;
+            function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+            resize(); window.addEventListener('resize', resize);
+
+            const nodes = [];
+            for (let i = 0; i < 60; i++) {
+                nodes.push({
+                    x: Math.random() * W, y: Math.random() * H,
+                    vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5,
+                    r: 2 + Math.random() * 3
+                });
+            }
+
+            function drawFrame() {
+                if (!shouldAnimate(canvas)) { requestAnimationFrame(drawFrame); return; }
+                ctx.clearRect(0, 0, W, H);
+
+                nodes.forEach(n => {
+                    n.x += n.vx; n.y += n.vy;
+                    if (n.x < 0 || n.x > W) n.vx *= -1;
+                    if (n.y < 0 || n.y > H) n.vy *= -1;
+                });
+
+                for (let i = 0; i < nodes.length; i++) {
+                    for (let j = i + 1; j < nodes.length; j++) {
+                        const dx = nodes[i].x - nodes[j].x;
+                        const dy = nodes[i].y - nodes[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 150) {
+                            const alpha = (1 - dist / 150) * 0.15;
+                            ctx.beginPath();
+                            ctx.strokeStyle = `rgba(0, 194, 232, ${alpha})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.moveTo(nodes[i].x, nodes[i].y);
+                            ctx.lineTo(nodes[j].x, nodes[j].y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+
+                nodes.forEach(n => {
+                    ctx.beginPath();
+                    ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(0, 194, 232, 0.3)';
+                    ctx.fill();
+                });
+
+                requestAnimationFrame(drawFrame);
+            }
+            requestAnimationFrame(drawFrame);
+            window._networkCanvas = canvas;
+        }
+
+        /* ═══════ CANVAS — Floating Particles ═══════ */
+        function initParticles() {
+            if (window._particlesReady) return;
+            window._particlesReady = true;
+
+            const canvas = document.createElement('canvas');
+            canvas.id = 'particles-canvas';
+            canvas.style.cssText = 'position:fixed;top:0;left:0;z-index:-1;width:100vw;height:100vh;opacity:0;transition:opacity 0.6s;';
+            document.body.appendChild(canvas);
+
+            const ctx = canvas.getContext('2d');
+            let W, H;
+            function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+            resize(); window.addEventListener('resize', resize);
+
+            const particles = [];
+            for (let i = 0; i < 80; i++) {
+                particles.push({
+                    x: Math.random() * W, y: Math.random() * H,
+                    vy: -0.3 - Math.random() * 0.5,
+                    r: 1 + Math.random() * 2,
+                    alpha: 0.1 + Math.random() * 0.3
+                });
+            }
+
+            function drawFrame() {
+                if (!shouldAnimate(canvas)) { requestAnimationFrame(drawFrame); return; }
+                ctx.clearRect(0, 0, W, H);
+                particles.forEach(p => {
+                    p.y += p.vy;
+                    if (p.y < -10) { p.y = H + 10; p.x = Math.random() * W; }
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(0, 194, 232, ${p.alpha})`;
+                    ctx.fill();
+                });
+                requestAnimationFrame(drawFrame);
+            }
+            requestAnimationFrame(drawFrame);
+            window._particlesCanvas = canvas;
+        }
+
+        initNetwork();
+        initParticles();
+
+        const logo = document.querySelector('.sci-logo');
+        const globalTitle = document.querySelector('.global-slide-title');
+        const networkCanvas = () => document.getElementById('network-canvas');
+        const particlesCanvas = () => document.getElementById('particles-canvas');
+
+        const slideTitles = {
+            1: 'Executive Summary',
+            2: 'Who We Are',
+            3: 'Staffing Categories',
+            4: 'Healthcare IT & EHR',
+            5: 'Data & AI',
+            6: 'Pricing Advantage',
+            7: 'Industries',
+            8: 'How We Staff',
+            9: 'Why SciEncephalon',
+            10: 'Engagement Volume',
+            11: 'SLA & Pipeline'
+        };
+
+        Reveal.on('slidechanged', event => {
+            const idx = event.indexh;
+
+            if (idx === 0 || idx === 12) {
+                logo.classList.remove('small-logo');
+            } else {
+                logo.classList.add('small-logo');
+            }
+
+            if (slideTitles[idx]) {
+                globalTitle.textContent = slideTitles[idx];
+                globalTitle.classList.add('visible');
+            } else {
+                globalTitle.classList.remove('visible');
+            }
+
+            const nc = networkCanvas();
+            if (nc) nc.style.opacity = (idx >= 0 && idx <= 11) ? '1' : '0';
+
+            const pc = particlesCanvas();
+            if (pc) pc.style.opacity = (idx === 6 || idx === 10) ? '0.6' : '0';
+        });
+
+        Reveal.slide(0);
+        setTimeout(() => Reveal.dispatchEvent({ type: 'slidechanged', data: { indexh: 0 } }), 100);
+    </script>
+</body>
+
+</html>

@@ -135,7 +135,7 @@
         .present .risk-tier:nth-child(2) { animation-delay: 0.7s; }
         .present .risk-tier:nth-child(3) { animation-delay: 1.1s; }
         @keyframes tierPop { to { opacity: 1; transform: scale(1); } }
-        .tier-circle { width: 130px; height: 130px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto 12px; font-weight: 900; font-size: 0.9em; border: 3px solid; white-space: nowrap; }
+        .tier-circle { width: 130px; height: 130px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto 12px; font-weight: 900; font-size: 0.9em; border: 3px solid; white-space: normal; line-height: 1.05; padding: 10px 8px; box-sizing: border-box; text-align: center; }
         .tier-circle.high { background: rgba(239,68,68,0.15); border-color: var(--health-red); color: var(--health-red); box-shadow: 0 0 30px rgba(239,68,68,0.3); }
         .tier-circle.moderate { background: rgba(245,158,11,0.15); border-color: var(--health-amber); color: var(--health-amber); box-shadow: 0 0 30px rgba(245,158,11,0.3); }
         .tier-circle.low { background: rgba(67,176,42,0.15); border-color: var(--health-green); color: var(--health-green); box-shadow: 0 0 30px rgba(67,176,42,0.3); }

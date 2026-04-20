@@ -1,0 +1,36 @@
+<svg width="780" height="200" viewBox="0 0 780 200" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <!-- Embed Google Fonts directly so SVG always renders correctly -->
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Audiowide&amp;family=Quicksand:wght@500&amp;display=swap');
+    </style>
+
+    <linearGradient id="brand_grad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#00a3cc" />
+      <stop offset="100%" stop-color="#0076a3" />
+    </linearGradient>
+    <linearGradient id="divider_grad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="30%" stop-color="#00c2e8" />
+      <stop offset="100%" stop-color="#1a2744" />
+    </linearGradient>
+  </defs>
+
+  <!-- Neural Encephalon Icon (Left) -->
+  <image href="neural_brain_icon.png" x="10" y="10" width="130" height="130" preserveAspectRatio="xMidYMid meet" />
+
+  <!-- Wordmark: SciEncephalon — Audiowide -->
+  <text x="160" y="100" font-family="Audiowide, sans-serif" font-size="52" font-weight="400" letter-spacing="-0.02em">
+    <tspan fill="#00a3cc">Sci</tspan><tspan fill="#1a2744">Encephalon</tspan>
+  </text>
+
+  <!-- AI Badge -->
+  <rect x="565" y="48" width="70" height="42" rx="21" fill="url(#brand_grad)" />
+  <text x="600" y="77" font-family="Audiowide, sans-serif" font-size="26" fill="white" text-anchor="middle" letter-spacing="0.05em">AI</text>
+
+  <!-- Clarity-to-Ambiguity Divider -->
+  <rect x="160" y="125" width="495" height="3" fill="url(#divider_grad)" />
+
+  <!-- Tagline — Quicksand -->
+  <text x="407" y="165" font-family="Quicksand, sans-serif" font-size="22" font-weight="500" fill="#94a3b8" text-anchor="middle" letter-spacing="0.02em">We bring clarity to your ambiguity</text>
+</svg>

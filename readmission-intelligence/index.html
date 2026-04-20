@@ -1,0 +1,1779 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Readmission Intelligence — RSM US | Powered by SciEncephalon AI</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reset.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/black.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Audiowide&family=Inter:wght@300;400;500;700;900&family=Quicksand:wght@400;500;600&display=swap');
+        @font-face {
+            font-family: 'Bega';
+            src: url('https://db.onlinewebfonts.com/t/3f745d63837d2d66200ef7acd77d9600.woff2') format('woff2'),
+                 url('https://db.onlinewebfonts.com/t/3f745d63837d2d66200ef7acd77d9600.woff') format('woff');
+            font-weight: 600;
+            font-style: normal;
+        }
+
+        :root {
+            --r-main-font: 'Inter', Helvetica, sans-serif;
+            --r-heading-font: 'Inter', Helvetica, sans-serif;
+            --r-heading-font-weight: 900;
+            --r-main-color: #ffffff;
+            --r-background-color: #0a0a1a;
+            --r-heading-text-transform: none;
+            --r-link-color: #009CDE;
+            --r-link-color-hover: #00b3cc;
+            --r-selection-background-color: #009CDE;
+
+            /* RSM brand colors */
+            --rsm-gray: #8C8C8C;
+            --rsm-green: #43B02A;
+            --rsm-blue: #009CDE;
+            --rsm-text: #6D6E71;
+
+            /* SciEncephalon brand colors */
+            --sci-blue: #0076a3;
+            --sci-cyan: #00c2e8;
+            --sci-navy: #1a2744;
+
+            /* Shared accent — blended RSM blue + Sci Cyan */
+            --accent: #009CDE;
+            --accent-glow: rgba(0, 156, 222, 0.5);
+
+            /* Healthcare semantics */
+            --health-green: #43B02A;
+            --health-red: #ef4444;
+            --health-amber: #f59e0b;
+        }
+
+        /* ═══════════════════════════════════════
+           CO-BRANDED LOGO SYSTEM
+           ═══════════════════════════════════════ */
+        .cobrand-logo {
+            position: fixed;
+            top: 18px;
+            left: 22px;
+            z-index: 99999;
+            pointer-events: none;
+            transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+            transform-origin: top left;
+            transform: scale(2.5);
+        }
+
+        .cobrand-logo.small-logo {
+            transform: translate(0, calc(100vh - 180px)) scale(1.8);
+        }
+
+        .cobrand-logo-inner {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0;
+        }
+
+        /* RSM Logo Mark — the three squares + blue bar */
+        .rsm-mark {
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            margin-bottom: 2px;
+        }
+
+        .rsm-sq {
+            width: 14px;
+            height: 14px;
+            border-radius: 1px;
+        }
+
+        .rsm-sq.gray { background: var(--rsm-gray); }
+        .rsm-sq.green { background: var(--rsm-green); }
+
+        .rsm-bar {
+            width: 28px;
+            height: 8px;
+            background: var(--rsm-blue);
+            border-radius: 1px;
+            margin-left: 2px;
+            align-self: center;
+        }
+
+        .rsm-wordmark {
+            font-family: 'Bega', sans-serif;
+            font-weight: 600;
+            font-style: normal;
+            font-size: 22px;
+            color: #a0a0a0;
+            letter-spacing: 0.5px;
+            line-height: 1;
+        }
+
+        .cobrand-divider {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, var(--rsm-green), var(--sci-cyan));
+            margin: 4px 0 3px;
+            opacity: 0.5;
+        }
+
+        .powered-by {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 6.5px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.45);
+            letter-spacing: 0.06em;
+        }
+
+        .powered-by-brand {
+            font-family: 'Audiowide', sans-serif;
+            font-size: 7.5px;
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 0.02em;
+        }
+
+        .powered-by-brand .logo-ai {
+            color: var(--sci-cyan);
+            text-shadow: 0 0 6px rgba(0, 194, 232, 0.4);
+        }
+
+        /* ═══════════════════════════════════════
+           GLOBAL SLIDE TITLE
+           ═══════════════════════════════════════ */
+        .global-slide-title {
+            position: fixed;
+            top: 30px;
+            left: 40px;
+            font-size: 2.6em;
+            font-weight: 800;
+            font-family: var(--r-heading-font);
+            color: var(--r-main-color);
+            z-index: 99999;
+            pointer-events: none;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.9);
+            letter-spacing: -0.02em;
+        }
+
+        .global-slide-title.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ═══════════════════════════════════════
+           TYPOGRAPHY
+           ═══════════════════════════════════════ */
+        /* Make Reveal background transparent so canvas animations show through */
+        body { background: var(--r-background-color); }
+        .reveal { background: transparent !important; }
+        .reveal .slide-background { background: transparent !important; }
+
+        .reveal .accent { color: var(--accent); }
+        .reveal .accent-green { color: var(--health-green); }
+        .reveal .accent-red { color: var(--health-red); }
+        .reveal .accent-amber { color: var(--health-amber); }
+
+        .reveal h1, .reveal h2, .reveal h3, .reveal h4 {
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+            margin-bottom: 0.5em;
+        }
+
+        .reveal p {
+            font-size: 1.4em;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .reveal .slide-number {
+            color: var(--accent);
+            background-color: transparent;
+        }
+
+        /* ═══════════════════════════════════════
+           IMPACT CONTAINER
+           ═══════════════════════════════════════ */
+        .impact-container {
+            display: none !important;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            min-height: 100%;
+            position: relative;
+            z-index: 10;
+            width: 100%;
+        }
+
+        .present .impact-container {
+            display: flex !important;
+        }
+
+        .impact-text {
+            font-size: 1.5em;
+            font-weight: 700;
+            line-height: 1.2;
+            text-align: center;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.9);
+            z-index: 20;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        /* ═══════════════════════════════════════
+           STAT CARDS
+           ═══════════════════════════════════════ */
+        .stat-row {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 30px;
+            z-index: 20;
+            position: relative;
+            flex-wrap: nowrap;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(0, 156, 222, 0.2);
+            border-radius: 16px;
+            padding: 24px 28px;
+            text-align: center;
+            min-width: 160px;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .present .stat-card {
+            animation: cardFadeIn 0.8s ease forwards;
+        }
+
+        .present .stat-card:nth-child(1) { animation-delay: 0.3s; }
+        .present .stat-card:nth-child(2) { animation-delay: 0.6s; }
+        .present .stat-card:nth-child(3) { animation-delay: 0.9s; }
+        .present .stat-card:nth-child(4) { animation-delay: 1.2s; }
+
+        @keyframes cardFadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stat-value {
+            font-size: 2.2em;
+            font-weight: 900;
+            color: var(--accent);
+            text-shadow: 0 0 20px var(--accent-glow);
+            line-height: 1;
+        }
+
+        .stat-value.green { color: var(--health-green); text-shadow: 0 0 20px rgba(67, 176, 42, 0.4); }
+        .stat-value.red { color: var(--health-red); text-shadow: 0 0 20px rgba(239, 68, 68, 0.4); }
+        .stat-value.amber { color: var(--health-amber); text-shadow: 0 0 20px rgba(245, 158, 11, 0.4); }
+
+        .stat-label {
+            font-size: 0.65em;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        /* ═══════════════════════════════════════
+           FEATURE BARS
+           ═══════════════════════════════════════ */
+        .feature-bars {
+            width: 780px;
+            margin: 15px auto 0;
+            z-index: 20;
+            position: relative;
+        }
+
+        .feature-bar-row {
+            display: flex;
+            align-items: center;
+            margin: 6px 0;
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+
+        .present .feature-bar-row {
+            animation: barSlideIn 0.6s ease forwards;
+        }
+
+        .present .feature-bar-row:nth-child(1) { animation-delay: 0.2s; }
+        .present .feature-bar-row:nth-child(2) { animation-delay: 0.35s; }
+        .present .feature-bar-row:nth-child(3) { animation-delay: 0.5s; }
+        .present .feature-bar-row:nth-child(4) { animation-delay: 0.65s; }
+        .present .feature-bar-row:nth-child(5) { animation-delay: 0.8s; }
+        .present .feature-bar-row:nth-child(6) { animation-delay: 0.95s; }
+        .present .feature-bar-row:nth-child(7) { animation-delay: 1.1s; }
+        .present .feature-bar-row:nth-child(8) { animation-delay: 1.25s; }
+
+        @keyframes barSlideIn {
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .feature-name {
+            width: 200px;
+            min-width: 200px;
+            text-align: right;
+            padding-right: 15px;
+            font-size: 0.42em;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .feature-bar-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .feature-bar {
+            height: 20px;
+            background: linear-gradient(90deg, var(--rsm-green), var(--sci-cyan));
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(0, 156, 222, 0.3);
+            flex-shrink: 0;
+        }
+
+        .feature-bar-val {
+            font-size: 0.45em;
+            color: var(--accent);
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        /* ═══════════════════════════════════════
+           LIFT TABLE
+           ═══════════════════════════════════════ */
+        .lift-table {
+            z-index: 20;
+            position: relative;
+            margin: 20px auto 0;
+            border-collapse: collapse;
+            font-size: 0.5em;
+        }
+
+        .lift-table th {
+            background: rgba(0, 156, 222, 0.12);
+            color: var(--accent);
+            padding: 10px 18px;
+            border-bottom: 2px solid rgba(0, 156, 222, 0.3);
+            font-weight: 700;
+        }
+
+        .lift-table td {
+            padding: 8px 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+            color: rgba(255, 255, 255, 0.85);
+            text-align: center;
+        }
+
+        .lift-table tr:first-child td {
+            color: var(--accent);
+            font-weight: 700;
+            background: rgba(0, 156, 222, 0.05);
+        }
+
+        .lift-table tr:nth-child(2) td { color: var(--health-green); }
+
+        /* ═══════════════════════════════════════
+           RISK TIERS
+           ═══════════════════════════════════════ */
+        .risk-tiers {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-top: 30px;
+            z-index: 20;
+            position: relative;
+        }
+
+        .risk-tier {
+            text-align: center;
+            opacity: 0;
+            transform: scale(0.8);
+        }
+
+        .present .risk-tier {
+            animation: tierPop 0.7s ease forwards;
+        }
+
+        .present .risk-tier:nth-child(1) { animation-delay: 0.3s; }
+        .present .risk-tier:nth-child(2) { animation-delay: 0.7s; }
+        .present .risk-tier:nth-child(3) { animation-delay: 1.1s; }
+
+        @keyframes tierPop {
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .tier-circle {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-weight: 900;
+            font-size: 1.0em;
+            border: 3px solid;
+        }
+
+        .tier-circle.high {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: var(--health-red);
+            color: var(--health-red);
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.3);
+        }
+
+        .tier-circle.moderate {
+            background: rgba(245, 158, 11, 0.15);
+            border-color: var(--health-amber);
+            color: var(--health-amber);
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.3);
+        }
+
+        .tier-circle.low {
+            background: rgba(67, 176, 42, 0.15);
+            border-color: var(--health-green);
+            color: var(--health-green);
+            box-shadow: 0 0 30px rgba(67, 176, 42, 0.3);
+        }
+
+        .tier-label {
+            font-size: 0.55em;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 5px;
+        }
+
+        .tier-action {
+            font-size: 0.45em;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 3px;
+            font-style: italic;
+        }
+
+        /* ═══════════════════════════════════════
+           PIPELINE FLOW
+           ═══════════════════════════════════════ */
+        .pipeline-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            z-index: 20;
+            position: relative;
+            margin-top: 30px;
+            flex-wrap: nowrap;
+        }
+
+        .pipeline-node {
+            background: rgba(0, 156, 222, 0.06);
+            border: 1px solid rgba(0, 156, 222, 0.2);
+            border-radius: 12px;
+            padding: 14px 14px;
+            text-align: center;
+            min-width: 110px;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .present .pipeline-node { animation: cardFadeIn 0.6s ease forwards; }
+        .present .pipeline-node:nth-child(1) { animation-delay: 0.2s; }
+        .present .pipeline-node:nth-child(2) { animation-delay: 0.5s; }
+        .present .pipeline-node:nth-child(3) { animation-delay: 0.5s; }
+        .present .pipeline-node:nth-child(4) { animation-delay: 0.8s; }
+        .present .pipeline-node:nth-child(5) { animation-delay: 0.8s; }
+        .present .pipeline-node:nth-child(6) { animation-delay: 1.1s; }
+        .present .pipeline-node:nth-child(7) { animation-delay: 1.1s; }
+        .present .pipeline-node:nth-child(8) { animation-delay: 1.4s; }
+        .present .pipeline-node:nth-child(9) { animation-delay: 1.4s; }
+        .present .pipeline-node:nth-child(10) { animation-delay: 1.7s; }
+
+        .pipeline-icon {
+            font-size: 1.6em;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+
+        .pipeline-label { font-size: 0.5em; font-weight: 700; color: #fff; }
+        .pipeline-sub { font-size: 0.38em; color: rgba(255, 255, 255, 0.5); margin-top: 4px; }
+
+        .pipeline-arrow {
+            font-size: 1.2em;
+            color: rgba(0, 156, 222, 0.4);
+            opacity: 0;
+        }
+
+        .present .pipeline-arrow { animation: cardFadeIn 0.4s ease forwards; }
+
+        /* ═══════════════════════════════════════
+           ARCHITECTURE
+           ═══════════════════════════════════════ */
+        .arch-container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            z-index: 20;
+            position: relative;
+            margin-top: 20px;
+            align-items: center;
+        }
+
+        .arch-row {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .arch-box {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(0, 156, 222, 0.2);
+            border-radius: 12px;
+            padding: 20px 28px;
+            text-align: center;
+            min-width: 180px;
+            opacity: 0;
+            transform: scale(0.9);
+        }
+
+        .present .arch-box { animation: tierPop 0.6s ease forwards; }
+        .present .arch-box:nth-child(1) { animation-delay: 0.2s; }
+        .present .arch-box:nth-child(2) { animation-delay: 0.4s; }
+        .present .arch-box:nth-child(3) { animation-delay: 0.6s; }
+
+        .arch-box-title { font-size: 0.6em; font-weight: 800; color: var(--accent); margin-bottom: 6px; }
+        .arch-box-desc { font-size: 0.4em; color: rgba(255, 255, 255, 0.6); }
+
+        .arch-box.highlight-box {
+            border-color: var(--health-green);
+            background: rgba(67, 176, 42, 0.06);
+        }
+
+        .arch-box.highlight-box .arch-box-title { color: var(--health-green); }
+
+        .arch-connector { font-size: 1.5em; color: rgba(0, 156, 222, 0.3); }
+
+        /* ═══════════════════════════════════════
+           THANK YOU SLIDE
+           ═══════════════════════════════════════ */
+        .thankyou-slide-content {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            min-height: 100%;
+            z-index: 20;
+            position: relative;
+        }
+
+        .present .thankyou-slide-content { display: flex; }
+
+        .thankyou-main {
+            font-size: 3.5em;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+            opacity: 0;
+        }
+
+        .present .thankyou-main { animation: cardFadeIn 1.2s ease forwards 0.3s; }
+
+        .thankyou-sub {
+            font-size: 1.0em;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 20px;
+            text-align: center;
+            line-height: 1.5;
+            opacity: 0;
+        }
+
+        .present .thankyou-sub { animation: cardFadeIn 1.0s ease forwards 1.0s; }
+
+        /* Co-branded footer for thank you */
+        .thankyou-cobrand {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            margin-top: 50px;
+            opacity: 0;
+        }
+
+        .present .thankyou-cobrand { animation: cardFadeIn 1.0s ease forwards 1.5s; }
+
+        .ty-rsm-logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .ty-rsm-mark {
+            display: flex;
+            gap: 4px;
+            align-items: flex-end;
+            margin-bottom: 4px;
+        }
+
+        .ty-rsm-sq {
+            width: 26px;
+            height: 26px;
+            border-radius: 2px;
+        }
+
+        .ty-rsm-bar {
+            width: 54px;
+            height: 14px;
+            background: var(--rsm-blue);
+            border-radius: 2px;
+            margin-left: 4px;
+            align-self: center;
+        }
+
+        .ty-rsm-text {
+            font-family: 'Bega', sans-serif;
+            font-weight: 600;
+            font-style: normal;
+            font-size: 42px;
+            color: #a0a0a0;
+            letter-spacing: 0.5px;
+        }
+
+        .ty-divider {
+            width: 1px;
+            height: 70px;
+            background: linear-gradient(180deg, var(--rsm-green), var(--sci-cyan));
+            opacity: 0.4;
+        }
+
+        .ty-sci-logo {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .ty-sci-name {
+            font-family: 'Audiowide', sans-serif;
+            font-size: 0.85em;
+            color: #fff;
+        }
+
+        .ty-sci-name .logo-ai {
+            color: var(--sci-cyan);
+            text-shadow: 0 0 10px rgba(0, 194, 232, 0.5);
+        }
+
+        .ty-sci-divider {
+            width: 100%;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.3);
+            margin: 5px 0 4px;
+        }
+
+        .ty-sci-tagline {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 0.55em;
+            color: rgba(255, 255, 255, 0.5);
+            letter-spacing: 0.04em;
+        }
+
+        /* ═══════════════════════════════════════
+           ANIMATIONS
+           ═══════════════════════════════════════ */
+        @keyframes metricPulse {
+            0%, 100% { text-shadow: 0 0 20px var(--accent-glow); }
+            50% { text-shadow: 0 0 40px var(--accent-glow), 0 0 60px var(--accent-glow); }
+        }
+
+        .pulse { animation: metricPulse 2s ease-in-out infinite; }
+    </style>
+</head>
+
+<body>
+    <!-- ═══════ CO-BRANDED LOGO ═══════ -->
+    <div class="cobrand-logo">
+        <div class="cobrand-logo-inner">
+            <div class="rsm-mark">
+                <div class="rsm-sq gray"></div>
+                <div class="rsm-sq green"></div>
+                <div class="rsm-bar"></div>
+            </div>
+            <div class="rsm-wordmark">RSM</div>
+            <div class="cobrand-divider"></div>
+            <div class="powered-by">Powered by</div>
+            <div class="powered-by-brand">SciEncephalon <span class="logo-ai">AI</span></div>
+        </div>
+    </div>
+
+    <div class="global-slide-title"></div>
+
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- ═══════ SLIDE 0 — TITLE ═══════ -->
+            <section>
+                <div class="impact-container">
+                    <div class="impact-text" style="font-size: 1.5em;">
+                        What if you could see<br><span class="accent">readmissions</span> before they happen?
+                    </div>
+                    <div style="font-size: 0.55em; color: rgba(255,255,255,0.45); margin-top: 25px; z-index:20; position:relative; font-weight: 400; letter-spacing: 0.05em;">
+                        A Machine Learning Platform for 30-Day Readmission Prevention
+                    </div>
+                    <div style="margin-top: 40px; z-index:20; position:relative; display: flex; align-items: center; gap: 20px;">
+                        <div style="text-align: center;">
+                            <div style="display: flex; gap: 3px; align-items: flex-end; justify-content: center; margin-bottom: 4px;">
+                                <div style="width: 20px; height: 20px; background: var(--rsm-gray); border-radius: 2px;"></div>
+                                <div style="width: 20px; height: 20px; background: var(--rsm-green); border-radius: 2px;"></div>
+                                <div style="width: 42px; height: 12px; background: var(--rsm-blue); border-radius: 2px; margin-left: 3px; align-self: center;"></div>
+                            </div>
+                            <div style="font-family: 'Bega', sans-serif; font-weight: 600; font-style: normal; font-size: 32px; color: #a0a0a0; letter-spacing: 0.5px;">RSM</div>
+                        </div>
+                        <div style="width: 1px; height: 50px; background: linear-gradient(180deg, var(--rsm-green), var(--sci-cyan)); opacity: 0.4;"></div>
+                        <div style="text-align: left;">
+                            <div style="font-family: 'Audiowide'; font-size: 0.7em; color: #fff;">SciEncephalon <span style="color: var(--sci-cyan); text-shadow: 0 0 8px rgba(0,194,232,0.5);">AI</span></div>
+                            <div style="font-family: 'Quicksand'; font-size: 0.38em; color: rgba(255,255,255,0.45); letter-spacing: 0.04em;">We bring clarity to your ambiguity</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══════ SLIDE 1 — THE HUMAN COST ═══════ -->
+            <section>
+                <div class="impact-container">
+                    <div style="font-size: 0.55em; color: rgba(255,255,255,0.4); margin-bottom: 15px; z-index: 20; position: relative; font-style: italic; letter-spacing: 0.03em;">
+                        Discharged on Tuesday. Back by Friday. The data saw it coming.
+                    </div>
+                    <div class="impact-text">
+                        <span class="accent-red">$17B</span> lost every year.<br>Most of it <span class="accent">preventable.</span>
+                    </div>
+                    <div class="stat-row">
+                        <div class="stat-card">
+                            <div class="stat-value red">3%</div>
+                            <div class="stat-label">Max HRRP Penalty<br>on Medicare Payments</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value amber">11.2%</div>
+                            <div class="stat-label">Average Readmission Rate<br>(Internal Data)</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">7.6%</div>
+                            <div class="stat-label">NY State Benchmark<br>PPR Rate</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value red">+3.6%</div>
+                            <div class="stat-label">Gap<br>Above Benchmark</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══════ SLIDE 2 — THE THESIS ═══════ -->
+            <section>
+                <div class="impact-container">
+                    <div style="font-size: 0.45em; color: rgba(255,255,255,0.35); margin-bottom: 10px; z-index: 20; position: relative; letter-spacing: 0.15em; text-transform: uppercase;">
+                        Our thesis
+                    </div>
+                    <div class="impact-text">
+                        Predict. <span class="accent">Intervene.</span> Prevent.
+                    </div>
+                    <div class="pipeline-flow">
+                        <div class="pipeline-node">
+                            <div class="pipeline-icon"><i class="fa-solid fa-database"></i></div>
+                            <div class="pipeline-label">EHR Data</div>
+                            <div class="pipeline-sub">100K+ patient records</div>
+                        </div>
+                        <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                        <div class="pipeline-node">
+                            <div class="pipeline-icon"><i class="fa-solid fa-gears"></i></div>
+                            <div class="pipeline-label">Feature Engineering</div>
+                            <div class="pipeline-sub">ICD-9, meds, history</div>
+                        </div>
+                        <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                        <div class="pipeline-node">
+                            <div class="pipeline-icon"><i class="fa-solid fa-brain"></i></div>
+                            <div class="pipeline-label">XGBoost Model</div>
+                            <div class="pipeline-sub">Gradient boosting</div>
+                        </div>
+                        <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                        <div class="pipeline-node">
+                            <div class="pipeline-icon"><i class="fa-solid fa-chart-line"></i></div>
+                            <div class="pipeline-label">Risk Scores</div>
+                            <div class="pipeline-sub">0.0 – 1.0 probability</div>
+                        </div>
+                        <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                        <div class="pipeline-node">
+                            <div class="pipeline-icon"><i class="fa-solid fa-shield-heart"></i></div>
+                            <div class="pipeline-label">Interventions</div>
+                            <div class="pipeline-sub">RPM, tele-health</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══════ SLIDE 3 — DATA PIPELINE ═══════ -->
+            <section>
+                <div class="impact-container">
+                    <div class="impact-text">
+                        <span class="accent">101,766</span> patients told us everything
+                    </div>
+                    <div class="stat-row">
+                        <div class="stat-card">
+                            <div class="stat-value">101K</div>
+                            <div class="stat-label">Patient Records<br>UCI Diabetes 130-US</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">130</div>
+                            <div class="stat-label">US Hospitals<br>1999 – 2008</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value green">2.2M</div>
+                            <div class="stat-label">NY SPARCS Records<br>Regional Benchmark</div>
+                        </div>
+                    </div>
+                    <div class="pipeline-flow" style="margin-top: 35px;">
+                        <div class="pipeline-node" style="min-width:120px;">
+                            <div class="pipeline-icon"><i class="fa-solid fa-user-injured"></i></div>
+                            <div class="pipeline-label">Demographics</div>
+                            <div class="pipeline-sub">Age, Race, Gender</div>
+                        </div>
+                        <div class="pipeline-node" style="min-width:120px;">
+                            <div class="pipeline-icon"><i class="fa-solid fa-stethoscope"></i></div>
+                            <div class="pipeline-label">Clinical History</div>
+                            <div class="pipeline-sub">Inpatient, ER visits</div>
+                        </div>
+                        <div class="pipeline-node" style="min-width:120px;">
+                            <div class="pipeline-icon"><i class="fa-solid fa-diagnoses"></i></div>
+                            <div class="pipeline-label">Diagnostics</div>
+                            <div class="pipeline-sub">ICD-9 codes (3 levels)</div>
+                        </div>
+                        <div class="pipeline-node" style="min-width:120px;">
+                            <div class="pipeline-icon"><i class="fa-solid fa-pills"></i></div>
+                            <div class="pipeline-label">Medications</div>
+                            <div class="pipeline-sub">Insulin, metformin</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══════ SLIDE 4 — MODEL PERFORMANCE ═══════ -->
+            <section>
+                <div class="impact-container">
+                    <div class="impact-text">
+                        The proof: <span class="accent">it works.</span>
+                    </div>
+                    <div class="stat-row">
+                        <div class="stat-card">
+                            <div class="stat-value pulse">0.78</div>
+                            <div class="stat-label">Train AUC-ROC</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value green">0.66</div>
+                            <div class="stat-label">Test AUC-ROC</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value green">88.8%</div>
+                            <div class="stat-label">Test Accuracy</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value amber">2.24×</div>
+                            <div class="stat-label">Lift (Top Decile)</div>
+                        </div>
+                    </div>
+                    <div style="font-size: 0.5em; color: rgba(255,255,255,0.45); margin-top: 20px; z-index: 20; position: relative;">
+                        XGBoost Ensemble &nbsp;|&nbsp; SMOTE for class imbalance &nbsp;|&nbsp; SHAP for explainability
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══════ SLIDE 5 — FEATURE IMPORTANCE ═══════ -->
+            <section>
+                <div class="impact-container">
+                    <div class="impact-text" style="font-size: 1.2em;">
+                        The <span class="accent">#1 predictor</span> might surprise you
+                    </div>
+                    <div class="feature-bars">
+                        <div class="feature-bar-row">
+                            <div class="feature-name" style="white-space: normal; line-height: 1.3;">Number of<br>Inpatient Visits</div>
+                            <div class="feature-bar-wrap"><div class="feature-bar" style="width: 370px;"></div><span class="feature-bar-val">64.4%</span></div>
+                        </div>
+                        <div class="feature-bar-row">
+                            <div class="feature-name">Discharge Disposition</div>
+                            <div class="feature-bar-wrap"><div class="feature-bar" style="width: 127px;"></div><span class="feature-bar-val">22.1%</span></div>
+                        </div>
+                        <div class="feature-bar-row">
+                            <div class="feature-name">Number of ER Visits</div>
+                            <div class="feature-bar-wrap"><div class="feature-bar" style="width: 95px;"></div><span class="feature-bar-val">16.6%</span></div>
+                        </div>
+                        <div class="feature-bar-row">
+                            <div class="feature-name">Number of Diagnoses</div>
+                            <div class="feature-bar-wrap"><div class="feature-bar" style="width: 48px;"></div><span class="feature-bar-val">8.4%</span></div>
+                        </div>
+                        <div class="feature-bar-row">
+                            <div class="feature-name">Diabetes Medication</div>
+                            <div class="feature-bar-wrap"><div class="feature-bar" style="width: 41px;"></div><span class="feature-bar-val">7.1%</span></div>
+                        </div>
+                        <div class="feature-bar-row">
+                            <div class="feature-name">Insulin</div>
+                            <div class="feature-bar-wrap"><div class="feature-bar" style="width: 41px;"></div><span class="feature-bar-val">7.1%</span></div>
+                        </div>
+                        <div class="feature-bar-row">
+                            <div class="feature-name">Age</div>
+                            <div class="feature-bar-wrap"><div class="feature-bar" style="width: 40px;"></div><span class="feature-bar-val">7.0%</span></div>
+                        </div>
+                        <div class="feature-bar-row">
+                            <div class="feature-name">Time in Hospital</div>
+                            <div class="feature-bar-wrap"><div class="feature-bar" style="width: 40px;"></div><span class="feature-bar-val">6.9%</span></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══════ SLIDE 6 — LIFT ANALYSIS ═══════ -->
+            <section>
+                <div class="impact-container">
+                    <div class="impact-text" style="font-size: 1.2em;">
+                        Target <span class="accent">10%</span> of patients. Capture <span class="accent">22%</span> of readmissions.
+                    </div>
+                    <table class="lift-table">
+                        <thead>
+                            <tr><th>Decile</th><th>Patients</th><th>Readmitted</th><th>Rate</th><th>Lift</th><th>Cumulative Gain</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Top 10%</td><td>1,471</td><td>372</td><td>25.3%</td><td>2.24×</td><td>22.4%</td></tr>
+                            <tr><td>Top 20%</td><td>2,942</td><td>628</td><td>21.3%</td><td>1.89×</td><td>37.8%</td></tr>
+                            <tr><td>Top 30%</td><td>4,413</td><td>849</td><td>19.2%</td><td>1.70×</td><td>51.1%</td></tr>
+                            <tr><td>Top 40%</td><td>5,883</td><td>1,033</td><td>17.6%</td><td>1.56×</td><td>62.2%</td></tr>
+                            <tr><td>Top 50%</td><td>7,354</td><td>1,180</td><td>16.0%</td><td>1.42×</td><td>71.1%</td></tr>
+                        </tbody>
+                    </table>
+                    <div style="font-size: 0.5em; color: rgba(255,255,255,0.45); margin-top: 15px; z-index: 20; position: relative;">
+                        Targeting the top 10% of patients captures 22.4% of all readmissions — more than double random
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══════ SLIDE 7 — RISK STRATIFICATION ═══════ -->
+            <section>
+                <div class="impact-container">
+                    <div class="impact-text" style="font-size: 1.2em;">
+                        Every patient gets a <span class="accent">prescription</span>
+                    </div>
+                    <div class="risk-tiers">
+                        <div class="risk-tier">
+                            <div class="tier-circle high">
+                                <div style="font-size:1.1em; line-height:1;">&gt; 0.7</div>
+                                <div style="font-size:0.4em; margin-top:6px; letter-spacing:0.1em;">HIGH</div>
+                            </div>
+                            <div class="tier-label"><i class="fa-solid fa-triangle-exclamation" style="color: var(--health-red);"></i> Immediate Intervention</div>
+                            <div class="tier-action">RPM kit + care coordination</div>
+                        </div>
+                        <div class="risk-tier">
+                            <div class="tier-circle moderate">
+                                <div style="font-size:0.85em; line-height:1; white-space:nowrap;">0.4 – 0.7</div>
+                                <div style="font-size:0.4em; margin-top:6px; letter-spacing:0.1em;">MODERATE</div>
+                            </div>
+                            <div class="tier-label"><i class="fa-solid fa-phone" style="color: var(--health-amber);"></i> Tele-Health Follow-up</div>
+                            <div class="tier-action">48hr post-discharge call</div>
+                        </div>
+                        <div class="risk-tier">
+                            <div class="tier-circle low">
+                                <div style="font-size:1.1em; line-height:1;">&lt; 0.4</div>
+                                <div style="font-size:0.4em; margin-top:6px; letter-spacing:0.1em;">LOW</div>
+                            </div>
+                            <div class="tier-label"><i class="fa-solid fa-check-circle" style="color: var(--health-green);"></i> Standard Discharge</div>
+                            <div class="tier-action">Normal instructions</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══════ SLIDE 8 — LENGTH OF STAY ═══════ -->
+            <section>
+                <div class="impact-container">
+                    <div class="impact-text" style="font-size: 1.2em;">
+                        The hidden <span class="accent-green">$6.4M</span> no one talks about
+                    </div>
+                    <div class="stat-row">
+                        <div class="stat-card">
+                            <div class="stat-value">3.53</div>
+                            <div class="stat-label">Geometric Mean<br>LOS (days)</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value amber">5.81</div>
+                            <div class="stat-label">Average LOS<br>(days)</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value red">1.29</div>
+                            <div class="stat-label">LOS Index<br>(vs benchmark)</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value green">$6.4M</div>
+                            <div class="stat-label">Excess Stay<br>Cost Opportunity</div>
+                        </div>
+                    </div>
+                    <div style="font-size: 0.5em; color: rgba(255,255,255,0.45); margin-top: 15px; z-index: 20; position: relative;">
+                        2.2M patients &nbsp;|&nbsp; Avg daily census: 34,969 &nbsp;|&nbsp; Flow efficiency: 61% &nbsp;|&nbsp; $2,000/day cost basis
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══════ SLIDE 9 — SYSTEM ARCHITECTURE ═══════ -->
+            <section>
+                <div class="impact-container">
+                    <div class="impact-text" style="font-size: 1.1em;">
+                        One platform. <span class="accent">Three answers.</span>
+                    </div>
+                    <div class="arch-container">
+                        <div class="arch-row">
+                            <div class="arch-box">
+                                <div class="pipeline-icon"><i class="fa-solid fa-brain"></i></div>
+                                <div class="arch-box-title">Predictive Engine</div>
+                                <div class="arch-box-desc">XGBoost ensemble on 100K+ records<br>SHAP explainability per patient</div>
+                            </div>
+                            <div class="arch-connector"><i class="fa-solid fa-arrow-right"></i></div>
+                            <div class="arch-box highlight-box">
+                                <div class="pipeline-icon" style="color: var(--health-green);"><i class="fa-solid fa-heart-pulse"></i></div>
+                                <div class="arch-box-title">RPM Simulator</div>
+                                <div class="arch-box-desc">Post-discharge vitals monitoring<br>IoT alerts for fluid retention, SpO2</div>
+                            </div>
+                            <div class="arch-connector"><i class="fa-solid fa-arrow-right"></i></div>
+                            <div class="arch-box">
+                                <div class="pipeline-icon"><i class="fa-solid fa-dollar-sign"></i></div>
+                                <div class="arch-box-title">Financial Simulator</div>
+                                <div class="arch-box-desc">HRRP penalty modeling<br>ROI vs. intervention cost</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-row" style="margin-top: 30px;">
+                        <div class="stat-card" style="min-width: 160px;">
+                            <div class="pipeline-icon"><i class="fa-solid fa-user-nurse"></i></div>
+                            <div class="stat-label" style="margin-top: 0;">Care Managers<br><span style="color: var(--accent);">Risk Analysis Tab</span></div>
+                        </div>
+                        <div class="stat-card" style="min-width: 160px;">
+                            <div class="pipeline-icon" style="color: var(--health-green);"><i class="fa-solid fa-laptop-medical"></i></div>
+                            <div class="stat-label" style="margin-top: 0;">RPM Nurses<br><span style="color: var(--health-green);">Remote Monitor Tab</span></div>
+                        </div>
+                        <div class="stat-card" style="min-width: 160px;">
+                            <div class="pipeline-icon" style="color: var(--health-amber);"><i class="fa-solid fa-building-columns"></i></div>
+                            <div class="stat-label" style="margin-top: 0;">Administrators<br><span style="color: var(--health-amber);">Penalty Simulator Tab</span></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══════ SLIDE 10 — EXPLAINABILITY / SHAP ═══════ -->
+            <section>
+                <div class="impact-container">
+                    <div class="impact-text">
+                        Not just predictions.<br><span class="accent">Explanations.</span>
+                    </div>
+                    <div class="stat-row" style="margin-top: 30px;">
+                        <div class="stat-card" style="text-align: left; min-width: 350px;">
+                            <div style="font-size: 0.6em; font-weight: 800; color: var(--accent); margin-bottom: 12px;">
+                                <i class="fa-solid fa-magnifying-glass-chart"></i> &nbsp;SHAP-Driven Reasoning
+                            </div>
+                            <div style="font-size: 0.45em; color: rgba(255,255,255,0.7); line-height: 1.8;">
+                                <i class="fa-solid fa-arrow-up" style="color: var(--health-red);"></i> &nbsp;4 prior inpatient stays → <b style="color: var(--health-red);">+0.18</b> risk<br>
+                                <i class="fa-solid fa-arrow-up" style="color: var(--health-red);"></i> &nbsp;Discharged to SNF → <b style="color: var(--health-red);">+0.12</b> risk<br>
+                                <i class="fa-solid fa-arrow-up" style="color: var(--health-amber);"></i> &nbsp;Insulin dose changed → <b style="color: var(--health-amber);">+0.07</b> risk<br>
+                                <i class="fa-solid fa-arrow-down" style="color: var(--health-green);"></i> &nbsp;Age 30-40 → <b style="color: var(--health-green);">−0.04</b> risk<br>
+                                <i class="fa-solid fa-arrow-down" style="color: var(--health-green);"></i> &nbsp;Short LOS (1 day) → <b style="color: var(--health-green);">−0.03</b> risk
+                            </div>
+                        </div>
+                        <div class="stat-card" style="text-align: center; min-width: 250px;">
+                            <div style="font-size: 0.6em; font-weight: 800; color: var(--health-amber); margin-bottom: 12px;">
+                                <i class="fa-solid fa-clipboard-check"></i> &nbsp;Clinician Trust
+                            </div>
+                            <div style="font-size: 0.45em; color: rgba(255,255,255,0.7); line-height: 1.8;">
+                                Every risk score includes<br>
+                                <b style="color: #fff;">patient-specific</b> reasoning<br><br>
+                                Clinicians see <b style="color: var(--accent);">why</b> — not just <b>what</b><br><br>
+                                Enables <b style="color: var(--health-green);">actionable</b> interventions
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══════ SLIDE 11 — FINANCIAL IMPACT ═══════ -->
+            <section>
+                <div class="impact-container">
+                    <div class="impact-text">
+                        <span class="accent-green">$2.8M</span> saved. Year one.
+                    </div>
+                    <div class="stat-row">
+                        <div class="stat-card">
+                            <div class="stat-value red">$4.2M</div>
+                            <div class="stat-label">Baseline HRRP<br>Penalty Exposure</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value green">$2.8M</div>
+                            <div class="stat-label">Projected<br>Annual Savings</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">5.2×</div>
+                            <div class="stat-label">ROI on<br>Intervention Cost</div>
+                        </div>
+                    </div>
+                    <div class="pipeline-flow" style="margin-top: 30px;">
+                        <div class="pipeline-node" style="min-width: 150px;">
+                            <div class="pipeline-icon"><i class="fa-solid fa-bullseye"></i></div>
+                            <div class="pipeline-label">Target Top 10%</div>
+                            <div class="pipeline-sub">1,471 patients per cohort</div>
+                        </div>
+                        <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                        <div class="pipeline-node" style="min-width: 150px;">
+                            <div class="pipeline-icon" style="color: var(--health-green);"><i class="fa-solid fa-heart-pulse"></i></div>
+                            <div class="pipeline-label">RPM + Tele-Health</div>
+                            <div class="pipeline-sub">Post-discharge monitoring</div>
+                        </div>
+                        <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                        <div class="pipeline-node" style="min-width: 150px;">
+                            <div class="pipeline-icon" style="color: var(--health-green);"><i class="fa-solid fa-chart-line"></i></div>
+                            <div class="pipeline-label">Reduce Readmissions</div>
+                            <div class="pipeline-sub">Lower penalty exposure</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══════ SLIDE 12 — SEPTICEMIA DEEP DIVE ═══════ -->
+            <section>
+                <div class="impact-container">
+                    <div class="impact-text" style="font-size: 1.1em;">
+                        Septicemia: where every hour<br>costs <span class="accent-red">$4,237</span>
+                    </div>
+                    <div class="stat-row">
+                        <div class="stat-card">
+                            <div class="stat-value red">7.8</div>
+                            <div class="stat-label">Average LOS<br>(days)</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">5.4</div>
+                            <div class="stat-label">Benchmark GMLOS<br>(days)</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value amber">144K</div>
+                            <div class="stat-label">Annual Patient<br>Volume (NY)</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value red">$32.9K</div>
+                            <div class="stat-label">Average Cost<br>per Case</div>
+                        </div>
+                    </div>
+                    <div style="font-size: 0.5em; color: rgba(255,255,255,0.45); margin-top: 15px; z-index: 20; position: relative;">
+                        471,718 excess patient-days annually &nbsp;|&nbsp; LOS Index: 1.73 &nbsp;|&nbsp; Highest cost DRG in the system
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══════ SLIDE 13 — WHY RSM + SCIENCEPHALON ═══════ -->
+            <section>
+                <div class="impact-container">
+                    <div class="impact-text" style="font-size: 1.3em;">
+                        Better <span class="accent">together.</span>
+                    </div>
+                    <div class="stat-row">
+                        <div class="stat-card" style="min-width: 180px;">
+                            <div class="pipeline-icon"><i class="fa-solid fa-building"></i></div>
+                            <div style="font-size: 0.6em; font-weight: 800; color: var(--rsm-blue);">RSM Advisory Reach</div>
+                            <div class="stat-label">National healthcare consulting<br>with deep operational expertise</div>
+                        </div>
+                        <div class="stat-card" style="min-width: 180px;">
+                            <div class="pipeline-icon"><i class="fa-solid fa-microscope"></i></div>
+                            <div style="font-size: 0.6em; font-weight: 800; color: var(--sci-cyan);">Scientific Rigor</div>
+                            <div class="stat-label">Physics-trained methodology<br>applied to clinical data</div>
+                        </div>
+                        <div class="stat-card" style="min-width: 180px;">
+                            <div class="pipeline-icon"><i class="fa-solid fa-eye"></i></div>
+                            <div style="font-size: 0.6em; font-weight: 800; color: var(--accent);">Full Transparency</div>
+                            <div class="stat-label">SHAP explanations for<br>every single prediction</div>
+                        </div>
+                        <div class="stat-card" style="min-width: 180px;">
+                            <div class="pipeline-icon"><i class="fa-solid fa-plug"></i></div>
+                            <div style="font-size: 0.6em; font-weight: 800; color: var(--health-green);">End-to-End Platform</div>
+                            <div class="stat-label">Prediction → RPM →<br>Financial ROI in one system</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══════ SLIDE 14 — THANK YOU ═══════ -->
+            <section>
+                <div class="thankyou-slide-content">
+                    <div class="thankyou-main">Thank <span class="accent">You.</span></div>
+                    <div class="thankyou-sub">
+                        Every readmission we prevent is a patient who heals at home —<br>
+                        <span class="accent">not back in a hospital bed.</span>
+                    </div>
+                    <!-- Co-branded footer -->
+                    <div class="thankyou-cobrand">
+                        <div class="ty-rsm-logo">
+                            <div class="ty-rsm-mark">
+                                <div class="ty-rsm-sq" style="background: var(--rsm-gray);"></div>
+                                <div class="ty-rsm-sq" style="background: var(--rsm-green);"></div>
+                                <div class="ty-rsm-bar"></div>
+                            </div>
+                            <div class="ty-rsm-text">RSM</div>
+                        </div>
+                        <div class="ty-divider"></div>
+                        <div class="ty-sci-logo">
+                            <div class="ty-sci-name">SciEncephalon <span class="logo-ai">AI</span></div>
+                            <div class="ty-sci-divider"></div>
+                            <div class="ty-sci-tagline">We bring clarity to your ambiguity</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+
+    <script>
+        function shouldAnimate(canvas) {
+            if (document.visibilityState !== 'visible') return false;
+            const op = canvas.style.opacity;
+            if (op === '0') return false;
+            if (op === '1') return true;
+            return parseFloat(getComputedStyle(canvas).opacity) > 0.01;
+        }
+
+        Reveal.initialize({
+            width: 1280, height: 850, margin: 0, minScale: 0.2, maxScale: 2.0,
+            hash: true, center: true, transition: 'fade', backgroundTransition: 'fade',
+            transitionSpeed: 'fast',
+            slideNumber: true
+        });
+
+        /* ═══════════════════════════════════════
+           CANVAS ANIMATIONS
+           ═══════════════════════════════════════ */
+
+        // ── 1. Heartbeat / Pulse Line ──
+        function initHeartbeat() {
+            if (window._heartbeatReady) return;
+            window._heartbeatReady = true;
+
+            const canvas = document.createElement('canvas');
+            canvas.id = 'heartbeat-canvas';
+            canvas.style.cssText = 'position:fixed;top:0;left:0;z-index:-1;width:100vw;height:100vh;opacity:0;transition:opacity 0.6s;';
+            document.body.appendChild(canvas);
+
+            const ctx = canvas.getContext('2d');
+            let W, H;
+
+            function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+            resize();
+            window.addEventListener('resize', resize);
+
+            let startT = performance.now();
+
+            function drawFrame(now) {
+                if (!shouldAnimate(canvas)) { requestAnimationFrame(drawFrame); return; }
+                ctx.clearRect(0, 0, W, H);
+
+                let elapsed = (now - startT) / 1000;
+
+                for (let line = 0; line < 5; line++) {
+                    let y0 = H * 0.15 + line * (H * 0.17);
+                    let alpha = 0.08 + (line === 2 ? 0.15 : 0);
+                    let speed = 120 + line * 15;
+                    let offset = elapsed * speed + line * 200;
+
+                    ctx.beginPath();
+                    ctx.lineWidth = line === 2 ? 2.5 : 1;
+                    // RSM blue for main trace, SciEncephalon cyan for secondary
+                    ctx.strokeStyle = line === 2 ?
+                        `rgba(0, 156, 222, ${alpha})` :
+                        `rgba(0, 194, 232, ${alpha * 0.6})`;
+
+                    for (let x = 0; x < W; x += 2) {
+                        let t = ((x + offset) % 300) / 300;
+                        let y = y0;
+
+                        if (t > 0.35 && t < 0.38) y = y0 - 8;
+                        else if (t > 0.38 && t < 0.42) y = y0 + 40 * (line === 2 ? 1.5 : 1);
+                        else if (t > 0.42 && t < 0.46) y = y0 - 55 * (line === 2 ? 1.5 : 1);
+                        else if (t > 0.46 && t < 0.50) y = y0 + 20;
+                        else if (t > 0.50 && t < 0.53) y = y0 - 5;
+                        else if (t > 0.60 && t < 0.65) y = y0 + 15;
+                        else if (t > 0.65 && t < 0.70) y = y0 - 10;
+
+                        if (x === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    }
+                    ctx.stroke();
+                }
+
+                requestAnimationFrame(drawFrame);
+            }
+            requestAnimationFrame(drawFrame);
+        }
+
+        // ── 2. Neural Network Animation ──
+        function initNeuralNet() {
+            if (window._neuralNetReady) return;
+            window._neuralNetReady = true;
+
+            const canvas = document.createElement('canvas');
+            canvas.id = 'neural-net-canvas';
+            canvas.style.cssText = 'position:fixed;top:0;left:0;z-index:-1;width:100vw;height:100vh;opacity:0;transition:opacity 0.6s;';
+            document.body.appendChild(canvas);
+
+            const ctx = canvas.getContext('2d');
+            let W, H;
+
+            function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+            resize();
+            window.addEventListener('resize', resize);
+
+            const layers = [
+                { n: 8, label: 'Features' },
+                { n: 12, label: 'Hidden 1' },
+                { n: 10, label: 'Hidden 2' },
+                { n: 6, label: 'Hidden 3' },
+                { n: 3, label: 'Risk' }
+            ];
+
+            function getNodes() {
+                let allNodes = [];
+                let xStep = W / (layers.length + 1);
+                layers.forEach((layer, li) => {
+                    let x = xStep * (li + 1);
+                    let yStep = H / (layer.n + 1);
+                    for (let ni = 0; ni < layer.n; ni++) {
+                        allNodes.push({ x: x, y: yStep * (ni + 1), layer: li, idx: ni });
+                    }
+                });
+                return allNodes;
+            }
+
+            let startT = performance.now();
+
+            function drawFrame(now) {
+                if (!shouldAnimate(canvas)) { requestAnimationFrame(drawFrame); return; }
+                ctx.clearRect(0, 0, W, H);
+                ctx.globalAlpha = 0.25;
+
+                let elapsed = (now - startT) / 1000;
+                let nodes = getNodes();
+                let pulseLayer = (elapsed * 0.8) % (layers.length + 1);
+
+                for (let i = 0; i < nodes.length; i++) {
+                    for (let j = 0; j < nodes.length; j++) {
+                        if (nodes[j].layer === nodes[i].layer + 1) {
+                            let dist = Math.abs(nodes[i].layer - pulseLayer);
+                            let alpha = dist < 1 ? 0.3 * (1 - dist) : 0.03;
+                            ctx.beginPath();
+                            ctx.moveTo(nodes[i].x, nodes[i].y);
+                            ctx.lineTo(nodes[j].x, nodes[j].y);
+                            ctx.strokeStyle = `rgba(0, 156, 222, ${alpha})`;
+                            ctx.lineWidth = dist < 1 ? 1.5 : 0.5;
+                            ctx.stroke();
+                        }
+                    }
+                }
+
+                nodes.forEach(n => {
+                    let dist = Math.abs(n.layer - pulseLayer);
+                    let glow = dist < 0.8 ? 1 - dist / 0.8 : 0;
+                    let radius = 4 + glow * 4;
+                    ctx.beginPath();
+                    ctx.arc(n.x, n.y, radius, 0, Math.PI * 2);
+
+                    if (n.layer === layers.length - 1) {
+                        let colors = ['#43B02A', '#f59e0b', '#ef4444'];
+                        ctx.fillStyle = colors[n.idx] || '#009CDE';
+                    } else {
+                        ctx.fillStyle = `rgba(0, 156, 222, ${0.3 + glow * 0.7})`;
+                    }
+
+                    if (glow > 0) { ctx.shadowBlur = 15 * glow; ctx.shadowColor = ctx.fillStyle; }
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                });
+
+                ctx.globalAlpha = 0.15;
+                ctx.font = '14px Inter';
+                ctx.fillStyle = '#fff';
+                ctx.textAlign = 'center';
+                let xStep = W / (layers.length + 1);
+                layers.forEach((l, i) => { ctx.fillText(l.label, xStep * (i + 1), H - 30); });
+                ctx.globalAlpha = 1;
+
+                requestAnimationFrame(drawFrame);
+            }
+            requestAnimationFrame(drawFrame);
+        }
+
+        // ── 3. Risk Particle Field ──
+        function initRiskParticles() {
+            if (window._riskParticlesReady) return;
+            window._riskParticlesReady = true;
+
+            const canvas = document.createElement('canvas');
+            canvas.id = 'risk-particles-canvas';
+            canvas.style.cssText = 'position:fixed;top:0;left:0;z-index:-1;width:100vw;height:100vh;opacity:0;transition:opacity 0.6s;';
+            document.body.appendChild(canvas);
+
+            const ctx = canvas.getContext('2d');
+            let W, H;
+            function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+            resize();
+            window.addEventListener('resize', resize);
+
+            const N = 300;
+            let particles = [];
+            for (let i = 0; i < N; i++) {
+                let risk = Math.random();
+                particles.push({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5, risk: risk, r: 2 + risk * 4 });
+            }
+
+            function drawFrame() {
+                if (!shouldAnimate(canvas)) { requestAnimationFrame(drawFrame); return; }
+                ctx.clearRect(0, 0, W, H);
+                ctx.globalAlpha = 0.35;
+
+                particles.forEach(p => {
+                    p.x += p.vx; p.y += p.vy;
+                    if (p.x < 0 || p.x > W) p.vx *= -1;
+                    if (p.y < 0 || p.y > H) p.vy *= -1;
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+
+                    if (p.risk > 0.7) { ctx.fillStyle = 'rgba(239, 68, 68, 0.8)'; ctx.shadowBlur = 8; ctx.shadowColor = '#ef4444'; }
+                    else if (p.risk > 0.4) { ctx.fillStyle = 'rgba(245, 158, 11, 0.6)'; ctx.shadowBlur = 4; ctx.shadowColor = '#f59e0b'; }
+                    else { ctx.fillStyle = 'rgba(67, 176, 42, 0.5)'; ctx.shadowBlur = 0; }
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                });
+
+                ctx.lineWidth = 0.5;
+                for (let i = 0; i < particles.length; i++) {
+                    if (particles[i].risk < 0.6) continue;
+                    for (let j = i + 1; j < particles.length; j++) {
+                        if (particles[j].risk < 0.6) continue;
+                        let dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y;
+                        let dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 80) {
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.strokeStyle = `rgba(239, 68, 68, ${(1 - dist / 80) * 0.2})`;
+                            ctx.stroke();
+                        }
+                    }
+                }
+                ctx.globalAlpha = 1;
+                requestAnimationFrame(drawFrame);
+            }
+            requestAnimationFrame(drawFrame);
+        }
+
+        // ── 4. Hospital Network ──
+        function initHospitalNetwork() {
+            if (window._hospitalNetReady) return;
+            window._hospitalNetReady = true;
+
+            const canvas = document.createElement('canvas');
+            canvas.id = 'hospital-net-canvas';
+            canvas.style.cssText = 'position:fixed;top:0;left:0;z-index:-1;width:100vw;height:100vh;opacity:0;transition:opacity 0.6s;';
+            document.body.appendChild(canvas);
+
+            const ctx = canvas.getContext('2d');
+            let W, H;
+            function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+            resize();
+            window.addEventListener('resize', resize);
+
+            let nodes = [];
+            for (let i = 0; i < 20; i++) {
+                let angle = (i / 20) * Math.PI * 2;
+                let ringR = Math.min(W, H) * 0.3;
+                let isCenter = i === 0;
+                nodes.push({
+                    x: W/2 + (isCenter ? 0 : Math.cos(angle) * ringR * (0.6 + Math.random() * 0.4)),
+                    y: H/2 + (isCenter ? 0 : Math.sin(angle) * ringR * (0.6 + Math.random() * 0.4)),
+                    r: isCenter ? 12 : 4 + Math.random() * 4,
+                    type: isCenter ? 'hub' : (Math.random() > 0.7 ? 'alert' : 'normal'),
+                    phase: Math.random() * Math.PI * 2
+                });
+            }
+
+            let startT = performance.now();
+
+            function drawFrame(now) {
+                if (!shouldAnimate(canvas)) { requestAnimationFrame(drawFrame); return; }
+                ctx.clearRect(0, 0, W, H);
+                ctx.globalAlpha = 0.2;
+                let elapsed = (now - startT) / 1000;
+
+                for (let i = 1; i < nodes.length; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(nodes[0].x, nodes[0].y);
+                    ctx.lineTo(nodes[i].x, nodes[i].y);
+                    ctx.strokeStyle = nodes[i].type === 'alert' ? 'rgba(239, 68, 68, 0.3)' : 'rgba(0, 156, 222, 0.15)';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+
+                    let t = (elapsed * 0.5 + i * 0.2) % 1;
+                    let px = nodes[0].x + (nodes[i].x - nodes[0].x) * t;
+                    let py = nodes[0].y + (nodes[i].y - nodes[0].y) * t;
+                    ctx.beginPath();
+                    ctx.arc(px, py, 2, 0, Math.PI * 2);
+                    ctx.fillStyle = '#009CDE';
+                    ctx.fill();
+                }
+
+                nodes.forEach(n => {
+                    let pulse = 1 + Math.sin(elapsed * 2 + n.phase) * 0.2;
+                    ctx.beginPath();
+                    ctx.arc(n.x, n.y, n.r * pulse, 0, Math.PI * 2);
+                    if (n.type === 'hub') { ctx.fillStyle = 'rgba(0, 156, 222, 0.4)'; ctx.shadowBlur = 20; ctx.shadowColor = '#009CDE'; }
+                    else if (n.type === 'alert') { ctx.fillStyle = 'rgba(239, 68, 68, 0.5)'; ctx.shadowBlur = 10; ctx.shadowColor = '#ef4444'; }
+                    else { ctx.fillStyle = 'rgba(67, 176, 42, 0.4)'; ctx.shadowBlur = 0; }
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                });
+                ctx.globalAlpha = 1;
+                requestAnimationFrame(drawFrame);
+            }
+            requestAnimationFrame(drawFrame);
+        }
+
+        // ── 5. Savings Flow ──
+        function initSavingsFlow() {
+            if (window._savingsFlowReady) return;
+            window._savingsFlowReady = true;
+
+            const canvas = document.createElement('canvas');
+            canvas.id = 'savings-flow-canvas';
+            canvas.style.cssText = 'position:fixed;top:0;left:0;z-index:-1;width:100vw;height:100vh;opacity:0;transition:opacity 0.6s;';
+            document.body.appendChild(canvas);
+
+            const ctx = canvas.getContext('2d');
+            let W, H;
+            function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+            resize();
+            window.addEventListener('resize', resize);
+
+            let symbols = [];
+            for (let i = 0; i < 60; i++) {
+                symbols.push({ x: Math.random() * W, y: Math.random() * H, vy: -0.3 - Math.random() * 0.7, size: 14 + Math.random() * 20, alpha: 0.03 + Math.random() * 0.06, char: ['$', '↓', '♥', '✓', '⬢'][Math.floor(Math.random() * 5)] });
+            }
+
+            function drawFrame() {
+                if (!shouldAnimate(canvas)) { requestAnimationFrame(drawFrame); return; }
+                ctx.clearRect(0, 0, W, H);
+
+                symbols.forEach(s => {
+                    s.y += s.vy;
+                    if (s.y < -30) { s.y = H + 30; s.x = Math.random() * W; }
+                    ctx.globalAlpha = s.alpha;
+                    ctx.font = `bold ${s.size}px Inter`;
+                    ctx.fillStyle = s.char === '$' ? '#43B02A' : s.char === '♥' ? '#ef4444' : '#009CDE';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(s.char, s.x, s.y);
+                });
+                ctx.globalAlpha = 1;
+                requestAnimationFrame(drawFrame);
+            }
+            requestAnimationFrame(drawFrame);
+        }
+
+        // ── 6. SHAP Rays ──
+        function initExplainRays() {
+            if (window._explainRaysReady) return;
+            window._explainRaysReady = true;
+
+            const canvas = document.createElement('canvas');
+            canvas.id = 'explain-rays-canvas';
+            canvas.style.cssText = 'position:fixed;top:0;left:0;z-index:-1;width:100vw;height:100vh;opacity:0;transition:opacity 0.6s;';
+            document.body.appendChild(canvas);
+
+            const ctx = canvas.getContext('2d');
+            let W, H;
+            function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+            resize();
+            window.addEventListener('resize', resize);
+
+            let startT = performance.now();
+
+            function drawFrame(now) {
+                if (!shouldAnimate(canvas)) { requestAnimationFrame(drawFrame); return; }
+                ctx.clearRect(0, 0, W, H);
+                ctx.globalAlpha = 0.12;
+
+                let elapsed = (now - startT) / 1000;
+                let cx = W / 2, cy = H / 2;
+
+                for (let i = 0; i < 16; i++) {
+                    let angle = (i / 16) * Math.PI * 2 + elapsed * 0.1;
+                    let len = 100 + Math.sin(elapsed + i) * 60;
+                    let isPositive = i % 3 !== 0;
+                    let x2 = cx + Math.cos(angle) * len;
+                    let y2 = cy + Math.sin(angle) * len;
+
+                    ctx.beginPath();
+                    ctx.moveTo(cx, cy);
+                    ctx.lineTo(x2, y2);
+                    ctx.strokeStyle = isPositive ? 'rgba(239, 68, 68, 0.4)' : 'rgba(67, 176, 42, 0.4)';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+
+                    ctx.beginPath();
+                    ctx.arc(x2, y2, 4, 0, Math.PI * 2);
+                    ctx.fillStyle = isPositive ? '#ef4444' : '#43B02A';
+                    ctx.fill();
+                }
+
+                let grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 50);
+                grad.addColorStop(0, 'rgba(0, 156, 222, 0.3)');
+                grad.addColorStop(1, 'rgba(0, 156, 222, 0)');
+                ctx.beginPath();
+                ctx.arc(cx, cy, 50, 0, Math.PI * 2);
+                ctx.fillStyle = grad;
+                ctx.fill();
+                ctx.globalAlpha = 1;
+                requestAnimationFrame(drawFrame);
+            }
+            requestAnimationFrame(drawFrame);
+        }
+
+        // ── 7. Thank You Galaxy ──
+        function initThankYouGalaxy() {
+            if (window._thankYouGalaxyReady) return;
+            window._thankYouGalaxyReady = true;
+
+            const canvas = document.createElement('canvas');
+            canvas.id = 'thankyou-galaxy-canvas';
+            canvas.style.cssText = 'position:fixed;top:0;left:0;z-index:-1;width:100vw;height:100vh;opacity:0;transition:opacity 0.6s;';
+            document.body.appendChild(canvas);
+
+            const ctx = canvas.getContext('2d');
+            let W, H;
+            function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+            resize();
+            window.addEventListener('resize', resize);
+
+            let stars = [];
+            for (let i = 0; i < 400; i++) {
+                let angle = Math.random() * Math.PI * 2;
+                let arm = Math.floor(Math.random() * 3);
+                let armAngle = angle + arm * (Math.PI * 2 / 3);
+                let r = 30 + Math.pow(Math.random(), 0.6) * 360;
+                let spread = r * 0.18;
+                // RSM green + SciEncephalon cyan + blue galaxy
+                stars.push({ angle: armAngle, r: r, size: 0.5 + Math.random() * 1.8, hue: [195, 150, 100][Math.floor(Math.random() * 3)], brightness: 0.4 + Math.random() * 0.6, phase: Math.random() * Math.PI * 2, speed: 0.0002 + Math.random() * 0.0004 });
+            }
+
+            let startT = performance.now();
+
+            function drawFrame(now) {
+                if (!shouldAnimate(canvas)) { requestAnimationFrame(drawFrame); return; }
+                ctx.fillStyle = 'rgba(10, 10, 26, 0.15)';
+                ctx.fillRect(0, 0, W, H);
+                let elapsed = (now - startT) / 1000;
+
+                stars.forEach(s => {
+                    s.angle += s.speed;
+                    let x = W / 2 + Math.cos(s.angle) * s.r;
+                    let y = H / 2 + Math.sin(s.angle) * s.r * 0.5;
+                    let twinkle = 0.5 + Math.sin(elapsed * 3 + s.phase) * 0.5;
+                    ctx.globalAlpha = s.brightness * (0.5 + twinkle * 0.5) * 0.7;
+                    ctx.beginPath();
+                    ctx.arc(x, y, s.size * (0.5 + twinkle * 0.5), 0, Math.PI * 2);
+                    ctx.fillStyle = `hsl(${s.hue}, 80%, ${60 + twinkle * 20}%)`;
+                    ctx.shadowBlur = 4 + twinkle * 4;
+                    ctx.shadowColor = ctx.fillStyle;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                });
+
+                ctx.globalAlpha = 0.3;
+                let core = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, 60);
+                core.addColorStop(0, 'rgba(255,255,255,0.4)');
+                core.addColorStop(0.3, 'rgba(0,156,222,0.15)');
+                core.addColorStop(1, 'rgba(0,156,222,0)');
+                ctx.beginPath();
+                ctx.arc(W / 2, H / 2, 60, 0, Math.PI * 2);
+                ctx.fillStyle = core;
+                ctx.fill();
+                ctx.globalAlpha = 1;
+                requestAnimationFrame(drawFrame);
+            }
+            requestAnimationFrame(drawFrame);
+        }
+
+        /* ═══════════════════════════════════════
+           SLIDE CHANGE CONTROLLER
+           ═══════════════════════════════════════ */
+        const slideTitles = {
+            0: "", 1: "The Stakes", 2: "Our Thesis", 3: "The Data",
+            4: "The Proof", 5: "Key Drivers", 6: "Precision Targeting",
+            7: "Action Framework", 8: "Hidden Value", 9: "The Platform",
+            10: "Explainability", 11: "The Bottom Line", 12: "Deep Dive",
+            13: "The Partnership", 14: ""
+        };
+
+        const slideAnimations = {
+            0: ['heartbeat-canvas'],
+            1: ['heartbeat-canvas'],
+            2: ['neural-net-canvas'],
+            3: ['neural-net-canvas'],
+            4: ['neural-net-canvas'],
+            5: ['risk-particles-canvas'],
+            6: ['risk-particles-canvas'],
+            7: ['risk-particles-canvas'],
+            8: ['hospital-net-canvas'],
+            9: ['hospital-net-canvas'],
+            10: ['explain-rays-canvas'],
+            11: ['savings-flow-canvas'],
+            12: ['hospital-net-canvas'],
+            13: ['savings-flow-canvas'],
+            14: ['thankyou-galaxy-canvas']
+        };
+
+        function updateSlide() {
+            const h = Reveal.getIndices().h;
+            const logo = document.querySelector('.cobrand-logo');
+            const title = document.querySelector('.global-slide-title');
+
+            if (h === 0) { logo.classList.remove('small-logo'); }
+            else { logo.classList.add('small-logo'); }
+
+            if (h === 0 || h === 14) { title.classList.remove('visible'); title.innerText = ""; }
+            else { title.classList.add('visible'); title.innerText = slideTitles[h] || ""; }
+
+            initHeartbeat(); initNeuralNet(); initRiskParticles();
+            initHospitalNetwork(); initSavingsFlow(); initExplainRays(); initThankYouGalaxy();
+
+            const allCanvases = ['heartbeat-canvas', 'neural-net-canvas', 'risk-particles-canvas', 'hospital-net-canvas', 'savings-flow-canvas', 'explain-rays-canvas', 'thankyou-galaxy-canvas'];
+            let activeCanvases = slideAnimations[h] || [];
+            allCanvases.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.opacity = activeCanvases.includes(id) ? '1' : '0';
+            });
+        }
+
+        Reveal.on('ready', updateSlide);
+        Reveal.on('slidechanged', updateSlide);
+    </script>
+</body>
+
+</html>
